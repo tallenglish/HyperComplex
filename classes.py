@@ -11,7 +11,7 @@ class Numeric(Number):
 
 	def inverse(self):
 
-		return self.conjugate() / self.squared()
+		return self.conjugate() / self.square()
 
 	def square(self):
 

@@ -1,6 +1,6 @@
 #!/usr/anaconda3/bin/python
 
-from functions import mathdunders, memoize
+from helpers import mathdunders, memoize
 from classes import Numeric
 from numbers import Number
 
@@ -79,7 +79,7 @@ def cayley_dickson_construction(parent):
 
 			return tuple(self.a.imag) + self.b.coefficients()
 
-		# Class Data Functionality
+		# HyperComplex Data Manipulation
 
 		@staticmethod
 		def coerce(other):
@@ -97,19 +97,26 @@ def cayley_dickson_construction(parent):
 
 			return parent.base()
 
-		def indexes(self, index):
+		# HyperComplex.indexes(index) returns base index for HyperComplex.matric use
+		# HyperComplex.values(index) returns index value for HyperComplex.outerproduct use
+		# HyperComplex.named(input) returns named index (e0, e1) or (1, i), etc
 
-			base = self.base()
+		def indexes(self, index, **args):
+
+			basis = ("basis" in args and [args["basis"]] or [None])[0]
+
+			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
 			result = [base(0)] * self.dimensions
 			result[index] = base(1)
 
 			return HyperComplex(*result)
 
-		def values(self, index):
+		def values(self, index, **args):
 
+			basis = ("basis" in args and [args["basis"]] or [None])[0]
+
+			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
 			coefficients = self.coefficients()
-
-			base = self.base()
 			result = [base(0)] * self.dimensions
 			result[index] = coefficients[index]
 
@@ -117,16 +124,30 @@ def cayley_dickson_construction(parent):
 
 		def named(self, input, **args):
 
-			numeric   = ("numeric"   in args and [args["numeric"]]   or [False])[0]
-			identity  = ("identity"  in args and [args["identity"]]  or [False])[0]
-			translate = ("translate" in args and [args["translate"]] or [False])[0]
-			element   = ("element"   in args and [args["element"]]   or ["e"])[0]
-			groups    = ("groups"    in args and [args["groups"]]    or [False])[0]
+			# Optional Arguments
 
-			translations = list("1ijkmIJKnpqrMPQR")
-			base = self.base()
+			asstring     = ("asstring"     in args and [args["asstring"]]     or [False])[0]
+			asobject     = ("asobject"     in args and [args["asobject"]]     or [False])[0]
+			asnumber     = ("asnumber"     in args and [args["asnumber"]]     or [False])[0]
+			asgroups     = ("asgroups"     in args and [args["asgroups"]]     or [False])[0]
+			asplots      = ("asplots"      in args and [args["asplots"]]      or [False])[0]
+			translate    = ("translate"    in args and [args["translate"]]    or [False])[0]
+			translations = ("translations" in args and [args["translations"]] or ["1ijkmIJKnpqrMPQR"])[0]
+			element      = ("element"      in args and [args["element"]]      or ["e"])[0]
+			basis        = ("basis"        in args and [args["basis"]]        or [None])[0]
+			index        = ("index"        in args and [args["index"]]        or [None])[0]
+			value        = ("value"        in args and [args["value"]]        or [input])[0]
+
+			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
+			translations = list(translations)
+
+			# index, value filters
 
 			if hasattr(input, "coefficients"):
+
+				# Added this to fix issue when doing outerproduct and having 0 values anywhere
+				# if any value is 0, return 0 immediately so the next() section doesn't throw a
+				# type error
 
 				if not input:
 
@@ -135,29 +156,40 @@ def cayley_dickson_construction(parent):
 				coefficients = input.coefficients()
 				enum = enumerate(coefficients)
 
-				index, value = next( ( (index, value) for index, value in enum if value))
+				index, value = next(((index, value) for index, value in enum if value))
 
-			elif groups:
+			elif asgroups and type(input) is int:
+
+				# Used bu the HyperComplex.group() function to add named elements
+				# to the rotation graph
+
+				# HyperComplex.group() required 0 index, HyperComplex.plot() 1 index
+				# starting arrays, group() also shows negativity as > len(self)
+				# numbering
 
 				value = (input >= len(self) and [base(-1)] or [base(1)])[0]
 				index = (input >= len(self) and [input - len(self)] or [input])[0]
 
 			sign  = ((value < 0) and ["-"] or [""])[0]
 
-			if identity:
+			# text filters
 
-				if groups and value < 0:
+			if asplots:
 
-					index += len(self)
+				# Used bu the HyperComplex.plot() functions to generate
+				# the base matricies used to generate the graphs
 
-				input = (groups and [F"{index}"] or [F"{sign}{index+1}"])[0]
+				input = F"{sign}{index+1}"
 
-			elif not numeric:
+			elif asstring and not asobject and not asnumber:
+
+				# Output Named/String Array, using either e0 + e1 + e2 + e3 format or the
+				# letter translations like 1 + i + j + k
 
 				value = ((value == base(1) or value == base(-1)) and [""] or [abs(value)])[0]
 				input = F"{sign}{value}{element}{index}"
 
-				if translate and self.dimensions <= 16:
+				if translate and self.dimensions <= len(translations):
 
 					value = ((index == 0 and value == "") and ["1"] or [value])[0]
 					input = ((index == 0) and [F"{sign}{value}"] or [F"{sign}{value}{translations[index]}"])[0]
@@ -172,15 +204,18 @@ def cayley_dickson_construction(parent):
 
 			if isinstance(self.a, Number):
 
-				return HyperComplex(0, 0, pair=True)
+				return HyperComplex(0, 0)
 
 			else:
 
-				return HyperComplex(self.a.zero(), self.b.zero(), pair=True)
+				return HyperComplex(self.a.zero(), self.b.zero())
 
-		def __init__(self, *args, pair=False):
+		def __init__(self, *args):
 
-			if pair:
+			# Added list/tuple type as allowed arguments
+			# Remove need for pair=True
+
+			if len(args) == 2:
 
 				self.a, self.b = map(parent, args)
 
@@ -238,17 +273,17 @@ def cayley_dickson_construction(parent):
 
 				yield i
 
-		# Class Display Functionality
+		# HyperComplex Products Display
+		# HyperComplex.outerproduct() returns tensor outer product of AB'
+		# HyperCompex.innerproctuct() returns scalar inner product of A'B
+		# HyperCompex.hadamardproctuct() returns vector hadamard product of AB
+		# HyperCompex.matrix() returns various forms of self multiplication matricies
 
-		def matrix(self, **args):
+		def matrixdisplay(self, result, **args):
 
-			string = ("string" in args and [args["string"]] or [False])[0]
+			asstring = ("asstring" in args and [args["asstring"]] or [False])[0]
 
-			a = list(map(self.indexes, range(self.dimensions)))
-
-			result = [[self.named(i * j, **args) for j in a] for i in a]
-
-			if string:
+			if asstring:
 
 				result = [list(map(str, row)) for row in result]
 				length = max(len(cell) for row in result for cell in row)
@@ -258,6 +293,258 @@ def cayley_dickson_construction(parent):
 				return "\n".join(rows)
 
 			return result
+
+		def outerproduct(self, other, **args):
+
+			asobject = ("asobject" in args and [args["asobject"]] or [False])[0]
+
+			other = HyperComplex.coerce(other)
+
+			if other is None:
+
+				return NotImplemented
+
+			other = other.conjugate()
+
+			a = list(map(self.values, range(self.dimensions)))
+			b = list(map(other.values, range(other.dimensions)))
+
+			result = [[self.named(i * j, **args) for j in b] for i in a]
+
+			if asobject:
+
+				for i in range(len(result)):
+
+					for j in range(len(result)):
+
+						result[i][j] = HyperComplex(result[i][j])
+
+			result = self.matrixdisplay(result, **args)
+
+			return result
+
+		def innerproduct(self, other):
+
+			return (self.conjugate() * other).real
+
+		def hadamardproduct(self, other, **args):
+
+			asobject = ("asobject" in args and [args["asobject"]] or [False])[0]
+			basis    = ("basis"    in args and [args["basis"]]    or [None])[0]
+
+			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
+
+			other = HyperComplex.coerce(other)
+
+			if other is None:
+
+				return NotImplemented
+
+			a = self.coefficients()
+			b = other.coefficients()
+			result = [base(0)] * self.dimensions
+
+			for i in range(self.dimensions):
+
+				x = a[i]
+				y = b[i]
+				result[i] = self.named(base(x * y), index=i, **args)
+
+			if asobject:
+
+				result = HyperComplex(result)
+
+			result = self.matrixdisplay(result, **args)
+
+			return result
+
+		def matrix(self, **args):
+
+			asobject = ("asobject" in args and [args["asobject"]] or [False])[0]
+
+			a = list(map(self.indexes, range(self.dimensions)))
+
+			result = [[self.named(i * j, **args) for j in a] for i in a]
+
+			if asobject:
+
+				for i in range(len(result)):
+
+					for j in range(len(result)):
+
+						result[i][j] = HyperComplex(result[i][j])
+
+			result = self.matrixdisplay(result, **args)
+
+			return result
+
+		# HyperComplex Graphical Operations
+		# HyperComplex.group() creates rotational diagram
+		# HyperCompex.plot() creates Cayley Diagram
+
+		def group(self, **args):
+
+			translate = ("translate" in args and [args["translate"]] or [False])[0]
+
+			def identity():
+
+				sz  = len(self)
+				id  = [[(i == j and  [1] or [0])[0] for j in range(0, sz)] for i in range(0, sz)]
+				id += [[(i == j and [-1] or [0])[0] for j in range(0, sz)] for i in range(0, sz)]
+
+				for i in range(0, sz * 2):
+
+					id[i] = HyperComplex(tuple(id[i]))
+
+				return id
+
+			def edge_matrix(idx):
+
+				ex = numpy.zeros((size, size), dtype=int)
+
+				for k in range(size):
+
+					ex[k][groups[k][idx]] = 1
+
+				return ex
+
+			def itgroups(input):
+
+				if not input:
+
+					return 0
+
+				coefficients = input.coefficients()
+				enum = enumerate(coefficients)
+
+				index, value = next(((index, value) for index, value in enum if value))
+
+				if value < 0:
+
+					index += len(input)
+
+				return index
+
+			edge_color_set = [
+				(0.89411765336990356, 0.10196078568696976, 0.1098039224743843100, 0.9),
+				(0.21602460800432691, 0.49487120380588606, 0.7198769869757634100, 0.9),
+				(0.30426760128900115, 0.68329106055054012, 0.2929334996962079700, 0.9),
+				(0.60083047361934883, 0.30814303335021526, 0.6316955229815315300, 0.9),
+				(1.00000000000000000, 0.50591311045721465, 0.0031372549487095253, 0.9),
+				(0.99315647868549117, 0.98700499826786570, 0.1991541745031581200, 0.9),
+				(0.65845446095747107, 0.34122261685483596, 0.1707958535236471000, 0.9),
+				(0.95850826852461868, 0.50846600392285513, 0.7449288887136122900, 0.9)
+			] * 10
+
+			size = len(self) * 2
+			groups = numpy.zeros((size, size), dtype=int)
+			members = identity()
+			connections = []
+
+			for a, b in itertools.product(members, repeat=2):
+
+				x = itgroups(a)
+				y = itgroups(b)
+				z = itgroups(a * b)
+
+				groups[x, y] = z
+
+			for k in range(1, size):
+
+				connections.append(edge_matrix(k))
+				g = networkx.from_numpy_matrix(sum(connections))
+
+				if networkx.is_connected(g):
+
+					break
+
+			g_loop = networkx.from_numpy_matrix(connections[0])
+			loops = sorted(list(networkx.connected_components(g_loop)))
+			loops = [numpy.roll(x, -k) for k, x in enumerate(loops)]
+			square = numpy.array([[-1, -1.0], [-1, 1], [1, 1], [1, -1]]) * (1 / numpy.sqrt(2))
+			g = graph_tool.Graph(directed=True)
+			g.add_vertex(size)
+
+			pos = g.new_vertex_property("vector<double>")
+			label = g.new_vertex_property("string")
+
+			for k, loop in enumerate(loops):
+
+				for idx, r in zip(loop.tolist(), square):
+
+					v = g.vertex(idx)
+					name = self.named(idx, asgroups=True, asstring=True, translate=translate)
+					pos[v] = r * (k + 1)
+					label[v] = name
+
+			edge_color = g.new_edge_property("vector<double>")
+
+			for k, c in enumerate(connections):
+
+				edges = zip(*numpy.where(c))
+
+				for e1, e2 in edges:
+
+					ex = g.add_edge(e1, e2)
+					edge_color[ex] = edge_color_set[k]
+
+			g_args = {
+				"edge_color": edge_color,
+				"output_size": (500,500),
+				"vertex_text": label,
+				"vertex_font_size": 14,
+				"vertex_size": 40,
+				"pos": pos,
+			}
+
+			graph_tool.draw.graph_draw(g, **g_args)
+
+		def plot(self, **args):
+
+			diverging = ("diverging" in args and [args["diverging"]] or [False])[0]
+
+			seaborn.set_style("white")
+
+			size = len(self)
+			identity = self.matrix(asplots=True)
+			figure, axis = pylab.subplots(figsize=(5.0, 5.0), dpi=100.0)
+			options = (diverging and [2 * size + 1] or [size])[0]
+			palette = seaborn.color_palette("RdBu_r", options)
+			rectangle = matplotlib.patches.Rectangle
+
+			for (i, j), z in numpy.ndenumerate(identity):
+
+				location = (j, size - i - 1)
+				options = (diverging and [int(z) + size] or [abs(int(z)) - 1])[0]
+				color = palette[options]
+
+				R = rectangle(location, 1, 1, snap=False, edgecolor=color, facecolor=color, lw=1, zorder=1)
+				axis.add_patch(R)
+
+			axis.get_xaxis().set_ticks([])
+			axis.get_yaxis().set_ticks([])
+
+			axis.set_xlim(0, size)
+			axis.set_ylim(0, size)
+
+			pylab.tight_layout()
+			pylab.show()
+
+		# HyperComplex Comparison
+
+		def __eq__(self, other):
+
+			coerced = HyperComplex.coerce(other)
+
+			if coerced is None:
+
+				self = other.__class__.coerce(self)
+
+			else:
+
+				other = coerced
+
+			return self.a == other.a and self.b == other.b
 
 		# Mathematical Type Conversion
 
@@ -287,197 +574,19 @@ def cayley_dickson_construction(parent):
 
 			return self.convert(complex, 2)
 
-		# Comparison Functionality
-
-		def __eq__(self, other):
-
-			coerced = HyperComplex.coerce(other)
-
-			if coerced is None:
-
-				self = other.__class__.coerce(self)
-
-			else:
-
-				other = coerced
-
-			return self.a == other.a and self.b == other.b
-
-		# Graphical Operations
-
-		def group(self, translate=False):
-
-			def identity():
-
-				sz  = len(self)
-				id  = [[(i == j and [1] or [0])[0] for j in range(0, sz)] for i in range(0, sz)]
-				id += [[(i == j and [-1] or [0])[0] for j in range(0, sz)] for i in range(0, sz)]
-
-				for i in range(0, sz * 2):
-
-					id[i] = HyperComplex(tuple(id[i]))
-
-				return id
-
-			def edge_matrix(idx):
-
-				ex = numpy.zeros((size, size), dtype=int)
-
-				for k in range(size):
-
-					ex[k][groups[k][idx]] = 1
-
-				return ex
-
-			edge_color_set = [
-				(0.89411765336990356, 0.10196078568696976, 0.1098039224743843100, 0.9),
-				(0.21602460800432691, 0.49487120380588606, 0.7198769869757634100, 0.9),
-				(0.30426760128900115, 0.68329106055054012, 0.2929334996962079700, 0.9),
-				(0.60083047361934883, 0.30814303335021526, 0.6316955229815315300, 0.9),
-				(1.00000000000000000, 0.50591311045721465, 0.0031372549487095253, 0.9),
-				(0.99315647868549117, 0.98700499826786570, 0.1991541745031581200, 0.9),
-				(0.65845446095747107, 0.34122261685483596, 0.1707958535236471000, 0.9),
-				(0.95850826852461868, 0.50846600392285513, 0.7449288887136122900, 0.9)
-			] * 10
-
-			size = len(self) * 2
-			groups = numpy.zeros((size, size), dtype=int)
-			members = identity()
-
-			for a, b in itertools.product(members, repeat=2):
-
-				x = int(self.named(a, identity=True, groups=True))
-				y = int(self.named(b, identity=True, groups=True))
-				z = int(self.named(a * b, identity=True, groups=True))
-
-				groups[x, y] = z
-
-			connections = []
-
-			for k in range(1, size):
-
-				connections.append(edge_matrix(k))
-				g = networkx.from_numpy_matrix(sum(connections))
-
-				if networkx.is_connected(g):
-
-					break
-
-			g_loop = networkx.from_numpy_matrix(connections[0])
-			loops = sorted(list(networkx.connected_components(g_loop)))
-			loops = [numpy.roll(x, -k) for k, x in enumerate(loops)]
-			square = numpy.array([[-1, -1.0], [-1, 1], [1, 1], [1, -1]]) * (1 / numpy.sqrt(2))
-			g = graph_tool.Graph(directed=True)
-			g.add_vertex(size)
-
-			pos = g.new_vertex_property("vector<double>")
-			label = g.new_vertex_property("string")
-
-			for k, loop in enumerate(loops):
-
-				for idx, r in zip(loop.tolist(), square):
-
-					v = g.vertex(idx)
-					name = self.named(idx, groups=True, translate=translate)
-					pos[v] = r * (k + 1)
-					label[v] = name
-
-			edge_color = g.new_edge_property("vector<double>")
-
-			for k, c in enumerate(connections):
-
-				edges = zip(*numpy.where(c))
-
-				for e1, e2 in edges:
-
-					ex = g.add_edge(e1, e2)
-					edge_color[ex] = edge_color_set[k]
-
-			g_args = {
-				"edge_color": edge_color,
-				"output_size": (int(600),) * 2,
-				"vertex_text": label,
-				"vertex_font_size": 14,
-				"vertex_size": 40,
-				"pos": pos,
-			}
-
-			graph_tool.draw.graph_draw(g, **g_args)
-
-		def plot(self, diverging=False):
-
-			seaborn.set_style("white")
-
-			size = len(self)
-			identity = self.matrix(identity=True)
-			figure, axis = pylab.subplots(figsize=(6, 6))
-			options = (diverging and [2 * size + 1] or [size])[0]
-			palette = seaborn.color_palette("RdBu_r", options)
-			rectangle = matplotlib.patches.Rectangle
-
-			for (i, j), z in numpy.ndenumerate(identity):
-
-				location = (j, size - i - 1)
-				options = (diverging and [int(z) + size] or [abs(int(z)) - 1])[0]
-				color = palette[options]
-
-				R = rectangle(location, 1, 1, snap=False, edgecolor=color, facecolor=color, lw=1, zorder=1)
-				axis.add_patch(R)
-
-			axis.get_xaxis().set_ticks([])
-			axis.get_yaxis().set_ticks([])
-
-			axis.set_xlim(0, size)
-			axis.set_ylim(0, size)
-
-			pylab.tight_layout()
-			pylab.show()
-
 		# Mathematical Operations
-
-		def outerproduct(self, other, **args):
-
-			string = ("string" in args and [args["string"]] or [False])[0]
-
-			other = HyperComplex.coerce(other)
-
-			if other is None:
-
-				return NotImplemented
-
-			other = other.conjugate()
-
-			a = list(map(self.values, range(self.dimensions)))
-			b = list(map(other.values, range(other.dimensions)))
-
-			result = [[self.named(i * j, **args) for j in b] for i in a]
-
-			if string:
-
-				result = [list(map(str, row)) for row in result]
-				length = max(len(cell) for row in result for cell in row)
-				offset = length - max(len(row[0]) for row in result)
-				rows = [" ".join(cell.rjust(length) for cell in row)[offset:] for row in result]
-
-				return "\n".join(rows)
-
-			return result
-
-		def innerproduct(self, other):
-
-			return (self.conjugate() * other).real
 
 		def conjugate(self):
 
-			return HyperComplex(self.a.conjugate(), -self.b, pair=True)
+			return HyperComplex(self.a.conjugate(), -self.b)
 
 		def __neg__(self):
 
-			return HyperComplex(-self.a, -self.b, pair=True)
+			return HyperComplex(-self.a, -self.b)
 
 		def __pos__(self):
 
-			return HyperComplex(+self.a, +self.b, pair=True)
+			return HyperComplex(+self.a, +self.b)
 
 		def __add__(self, other):
 
@@ -487,7 +596,7 @@ def cayley_dickson_construction(parent):
 
 				return NotImplemented
 
-			return HyperComplex(self.a + other.a, self.b + other.b, pair=True)
+			return HyperComplex(self.a + other.a, self.b + other.b)
 
 		def __radd__(self, other):
 
@@ -504,7 +613,7 @@ def cayley_dickson_construction(parent):
 			a = self.a * other.a - other.b.conjugate() * self.b
 			b = other.b * self.a + self.b * other.a.conjugate()
 
-			return HyperComplex(a, b, pair=True)
+			return HyperComplex(a, b)
 
 		def __rmul__(self, other):
 
@@ -536,7 +645,7 @@ def cayley_dickson_construction(parent):
 
 				return NotImplemented
 
-			return HyperComplex(self.a - other.a, self.b - other.b, pair=True)
+			return HyperComplex(self.a - other.a, self.b - other.b)
 
 		def __rsub__(self, other):
 
@@ -584,7 +693,7 @@ def cayley_dickson_algebra(level, base=float):
 
 R = Real = cayley_dickson_real_base()
 C = Complex = cayley_dickson_construction(R)
-H = Quaternion = cayley_dickson_construction(C)
+H = Q = Quaternion = cayley_dickson_construction(C)
 O = Octonion = cayley_dickson_construction(H)
 S = Sedenion = cayley_dickson_construction(O)
 P = Pathion = cayley_dickson_construction(S)
