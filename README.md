@@ -106,9 +106,9 @@ A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that
 ![Complex](complex.png "Complex")
 
 ```python
-# Complex().group(translate=True)
-# Complex().plot(diverging=True)
-# Disabled: Takes less than 1s
+Complex().group(translate=True)
+Complex().plot(diverging=True)
+# NOTE: Takes less than 1s
 ```
 
 #### **`Quaternion Numbers`**
@@ -119,9 +119,9 @@ A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that
 ![Quaternions](quaternion.png "Quaternions")
 
 ```python
-# Quaternion().group(translate=True)
-# Quaternion().plot(diverging=True)
-# Disabled: Will take less than 1s
+Quaternion().group(translate=True)
+Quaternion().plot(diverging=True)
+# NOTE: Takes less than 1s
 ```
 
 #### **`Octonion Numbers`**
@@ -134,9 +134,9 @@ The Cayley graph is hard project into two-dimensions, there overlapping edges al
 ![Octonion](octonion.png "Octonion")
 
 ```python
-# Octonion().group(translate=True)
-# Octonion().plot(diverging=True)
-# Disabled: Should take less than 1s
+Octonion().group(translate=True)
+Octonion().plot(diverging=True)
+# NOTE: Takes less than 1s
 ```
 
 #### **`Sedenion Numbers`**
@@ -146,8 +146,8 @@ The Cayley graph is hard project into two-dimensions, there overlapping edges al
 ![Sedenion](sedenion.png "Sedenion")
 
 ```python
-# Sedenion().plot(diverging=True)
-# Disabled: Should take less than 1s
+Sedenion().plot(diverging=True)
+# NOTE: Takes less than 1s
 ```
 
 #### **`Pathion Numbers`**
@@ -157,8 +157,8 @@ Pathions form a 32-dimensional algebra over the reals obtained by applying the C
 ![Pathion](pathion.png "Pathion")
 
 ```python
-# Pathion().plot(diverging=True)
-# Disabled: Should take about 8s
+Pathion().plot(diverging=True)
+# NOTE: Takes about 10s
 ```
 
 #### **`Chingon Numbers`**
@@ -169,8 +169,8 @@ Chingons form a 64-dimensional algebra over the reals obtained by applying the C
 ![Chingon](chingon.png "Chingon")
 
 ```python
-# Chingon().plot(diverging=True)
-# Disabled: Can take 1m50s
+Chingon().plot(diverging=True)
+# NOTE: Can take 1m50s
 ```
 
 #### **`Routon Numbers`**
@@ -180,8 +180,8 @@ Routons form a 128-dimensional algebra over the reals obtained by applying the C
 ![Routon](routon.png "Routon")
 
 ```python
-# Routon().plot(diverging=True)
-# Disabled: Takes a very long time
+Routon().plot(diverging=True)
+# NOTE: Takes a very long time
 ```
 
 #### **`Voudon Numbers`**
@@ -191,6 +191,6 @@ Voudons form a 256-dimensional algebra over the reals obtained by applying the C
 ![Voudon](voudon.png "Voudon")
 
 ```python
-# Voudon().plot(diverging=True)
-# Disabled: Takes a very, very long time
+Voudon().plot(diverging=True)
+# NOTE: Takes a very long time
 ```
