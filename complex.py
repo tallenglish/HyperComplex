@@ -12,7 +12,6 @@ import graph_tool
 import graph_tool.draw
 import seaborn
 import networkx
-import pandas
 
 def cayley_dickson_real_base(base=float):
 
