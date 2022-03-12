@@ -10,13 +10,15 @@ The method for this construction is known as the [Cayley-Dickson construction](h
 
 This Python 3 package allows the creation of number classes at any repetition level of Cayley-Dickson constructions, and has built-ins for the lower, named levels such as quaternion, octonion, and sedenion.
 
-#### **`Special Thanks`**
+![Diagram](images/diagram.png "Diagram")
+
+### **`Special Thanks`**
 
 This package is a combination of the work done by [discretegames](https://github.com/discretegames) providing the [mathdunders](https://github.com/discretegames/mathdunders) and most of the [hypercomplex](https://github.com/discretegames/hypercomplex) base functionality, but also [thoppe](https://github.com/thoppe) for providing the base graphical plot functionality from [cayley-dickson](https://github.com/thoppe/Cayley-Dickson).
 
 This library however has been taylored to use ***`Jupiter Notebook`***, and the native notebook functionality of Visual Studio Code rather than work as command line tools.  I have also added to these base packages, functionality for `inner, outer and hadamard products`.
 
-#### **`Requirements`**
+### **`Requirements`**
 
 The following packages are required, specifially for the graphical functionality, if you remove the HyperComplex.group() and HyperComplex.plot() methods, you no longer need these requirements and the package can work standalone:
 
@@ -29,13 +31,13 @@ The following packages are required, specifially for the graphical functionality
 - seaborn
 - networkx
 
-##### **`Import HyperComplex Library`**
+### **`Import HyperComplex Library`**
 
 ```python
 from hypercomplex import *
 ```
 
-##### **`Basic Usage`**
+### **`Basic Usage`**
 
 You can any of the following:
 
@@ -83,7 +85,7 @@ True
 (0.0333333 -0.0666667 -0.1 -0.133333)
 ```
 
-##### **`HyperComplex Methods`**
+### **`HyperComplex Methods`**
 
 ```python
 print("Real Part:\n",           AA.real, "\n")
@@ -97,31 +99,31 @@ print("Hadamard Product:\n",    AA.hadamardproduct(AB, asobject=True))
 
 ```
 Real Part:
- 1.0 
+ 1.0
 
 Imaginary Part:
- (2.0, 3.0, 4.0) 
+ (2.0, 3.0, 4.0)
 
 Coefficients:
- (1.0, 2.0, 3.0, 4.0) 
+ (1.0, 2.0, 3.0, 4.0)
 
 Conjugate Transpose:
- (1 -2 -3 -4) 
+ (1 -2 -3 -4)
 
 Inner Product:
- 30.0 
+ 30.0
 
 Outer Product:
     1  -2.0i  -3.0j  -4.0k
  2.0i    4.0  -6.0k   8.0j
  3.0j   6.0k    9.0 -12.0i
- 4.0k  -8.0j  12.0i   16.0 
+ 4.0k  -8.0j  12.0i   16.0
 
 Hadamard Product:
  (1 4 9 16)
  ```
 
-#### **`HyperComplex Multiplication Matricies`**
+### **`HyperComplex Multiplication Matricies`**
 
 These can have various options to alter how the data is handed back, `asstring=True` will output the array as a string, adding by default `e0, e1, ...` as the index names, however you can add `translate=True` to change them to `1 + i + j + k, ...` format.  You can also use custom indexes by either changing the `element=e` option or `translations=1ijkmIJKnpqrMPQR` option.
 
@@ -137,7 +139,7 @@ Multiplication Matrix:
  1  i  j  k
  i -1  k -j
  j -k -1  i
- k  j -i -1 
+ k  j -i -1
 
 Multiplication ID:
  1  2  3  4
@@ -146,11 +148,11 @@ Multiplication ID:
  4  3 -2 -1
 ```
 
-#### **`HyperComplex Graphical Methods`**
+### **`HyperComplex Graphical Methods`**
 
 For the `HyperComplex.plot()` method, which produces images so we can visualize the multiplication tables with a diverging colormap. Red values are positive, blue values are negative. For example, with the complex numbers 1 => least red, i => most red, -1 => least blue, -i => most blue. Additionally, for the smaller algebras, we can construct the [Cayley Graph](http://en.wikipedia.org/wiki/Cayley_graph) using `HyperComplex.graph()` as shown below for quaternions.  Both methods gain the order from the parent class calling it.
 
-#### **`Complex Numbers`**
+### **`Complex Numbers`**
 
 A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that can be expressed in the form `a + bi`, where `a` and `b` are real numbers and `i` is the imaginary unit. They are a normed division algebra over the real numbers. There is no natural linear ordering (commutativity) on the set of complex numbers.
 
@@ -161,10 +163,10 @@ Complex().plot(diverging=True)
 # NOTE: Takes less than 1s
 ```
 
-![Complex](group2.png "Complex")
-![Complex](complex.png "Complex")
+![Complex](images/group2.png "Complex")
+![Complex](images/complex.png "Complex")
 
-#### **`Quaternion Numbers`**
+### **`Quaternion Numbers`**
 
 [Quaternions](http://en.wikipedia.org/wiki/Quaternion) are a normed division algebra over the real numbers that can be expressed in the form `a + bi + cj + dk`, where `a`, `b`, `c` and `d` are real numbers and `i`, `j`, `k` are the imaginary units.  They are noncommutative. The unit quaternions can be thought of as a choice of a group structure on the 3-sphere S3 that gives the group Spin(3), which is isomorphic to SU(2) and also to the universal cover of SO(3).
 
@@ -174,10 +176,10 @@ Quaternion().plot(diverging=True)
 # NOTE: Takes less than 1s
 ```
 
-![Quaternions](group4.png "Quaternions")
-![Quaternions](quaternion.png "Quaternions")
+![Quaternions](images/group4.png "Quaternions")
+![Quaternions](images/quaternion.png "Quaternions")
 
-#### **`Octonion Numbers`**
+### **`Octonion Numbers`**
 
 [Octonions](http://en.wikipedia.org/wiki/Octonion) are a normed division algebra over the real numbers. They are noncommutative and nonassociative, but satisfy a weaker form of associativity, namely they are alternative. The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals. That can be expressed in the form `a + bi + cj + dk + em + fI + gJ + hK`, where `a .. h` are real numbers and `i, j, k, m, I, J, K` are the imaginary units.
 
@@ -189,10 +191,10 @@ Octonion().plot(diverging=True)
 # NOTE: Takes less than 1s
 ```
 
-![Octionion](group8.png "Octonion")
-![Octonion](octonion.png "Octonion")
+![Octionion](images/group8.png "Octonion")
+![Octonion](images/octonion.png "Octonion")
 
-#### **`Sedenion Numbers`**
+### **`Sedenion Numbers`**
 
 [Sedenion](http://en.wikipedia.org/wiki/Sedenion) orm a 16-dimensional noncommutative and nonassociative algebra over the reals obtained by applying the Cayley–Dickson construction to the octonions. That can be expressed in the form `a + i + j + k + m + I + J + K...`, where `a...` are real numbers and `i, j, k, m, I, J, K, n, p, q, r, M, P, Q, R` are the imaginary units.
 
@@ -201,9 +203,9 @@ Sedenion().plot(diverging=True)
 # NOTE: Takes less than 1s
 ```
 
-![Sedenion](sedenion.png "Sedenion")
+![Sedenion](images/sedenion.png "Sedenion")
 
-#### **`Pathion Numbers`**
+### **`Pathion Numbers`**
 
 Pathions form a 32-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the sedenions.
 
@@ -212,9 +214,9 @@ Pathion().plot(diverging=True)
 # NOTE: Takes about 10s
 ```
 
-![Pathion](pathion.png "Pathion")
+![Pathion](images/pathion.png "Pathion")
 
-#### **`Chingon Numbers`**
+### **`Chingon Numbers`**
 
 Chingons form a 64-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the pathion.
 
@@ -223,9 +225,9 @@ Chingon().plot(diverging=True)
 # NOTE: Can take 1m50s
 ```
 
-![Chingon](chingon.png "Chingon")
+![Chingon](images/chingon.png "Chingon")
 
-#### **`Routon Numbers`**
+### **`Routon Numbers`**
 
 Routons form a 128-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the chingons.
 
@@ -234,9 +236,9 @@ Routon().plot(diverging=True)
 # NOTE: Takes a very long time
 ```
 
-![Routon](routon.png "Routon")
+![Routon](images/routon.png "Routon")
 
-#### **`Voudon Numbers`**
+### **`Voudon Numbers`**
 
 Voudons form a 256-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the routons.
 
@@ -245,4 +247,4 @@ Voudon().plot(diverging=True)
 # NOTE: Takes a very long time
 ```
 
-![Voudon](voudon.png "Voudon")
+![Voudon](images/voudon.png "Voudon")
