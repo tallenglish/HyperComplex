@@ -158,7 +158,7 @@ For the `HyperComplex.plot()` method, which produces images so we can visualize 
 
 ### **`Complex Numbers`**
 
-A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that can be expressed in the form `a + bi`, where `a` and `b` are real numbers and `i` is the imaginary unit. They are a normed division algebra over the real numbers. There is no natural linear ordering (commutativity) on the set of complex numbers.
+A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that can be expressed in the form `a + bi`, where `a` and `b` are real numbers and `i` is the imaginary unit, imaginary being the root of a negative square number `i = sqrt(-1)`. They are a normed division algebra over the real numbers. There is no natural linear ordering (commutativity) on the set of complex numbers.
 
 
 ```python
@@ -177,6 +177,12 @@ X.plot(diverging=True)
 
 [Quaternions](http://en.wikipedia.org/wiki/Quaternion) are a normed division algebra over the real numbers that can be expressed in the form `a + bi + cj + dk`, where `a`, `b`, `c` and `d` are real numbers and `i`, `j`, `k` are the imaginary units.  They are noncommutative. The unit quaternions can be thought of as a choice of a group structure on the 3-sphere S3 that gives the group Spin(3), which is isomorphic to SU(2) and also to the universal cover of SO(3).
 
+The significance of the higher order imaginary units:
+
+- $i = jk, j = ki, k = ij$
+- $i^2 = j^2 = k^2 = -1$
+- $ijk = -1$
+
 ```python
 # NOTE: Takes less than 1s
 
@@ -192,6 +198,12 @@ X.plot(diverging=True)
 ### **`Octonion Numbers`**
 
 [Octonions](http://en.wikipedia.org/wiki/Octonion) are a normed division algebra over the real numbers. They are noncommutative and nonassociative, but satisfy a weaker form of associativity, namely they are alternative. The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals. That can be expressed in the form `a + bi + cj + dk + em + fI + gJ + hK`, where `a .. h` are real numbers and `i, j, k, m, I, J, K` are the imaginary units.
+
+The significance of the higher order imaginary units:
+
+- $[m, I, J, K] = [1, i, j, k] * m$
+- $I^2 = J^2 = K^2 = m^2 = -1$
+- $IJK = m$
 
 The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals.
 
@@ -210,6 +222,13 @@ X.plot(diverging=True)
 ### **`Sedenion Numbers`**
 
 [Sedenion](http://en.wikipedia.org/wiki/Sedenion) orm a 16-dimensional noncommutative and nonassociative algebra over the reals obtained by applying the Cayley–Dickson construction to the octonions. That can be expressed in the form `a + i + j + k + m + I + J + K...`, where `a...` are real numbers and `i, j, k, m, I, J, K, n, p, q, r, M, P, Q, R` are the imaginary units.
+
+The significance of the higher order imaginary units:
+
+- $[n, p, q, r] = [1, i, j, k] * n$
+- $[M, P, Q, R] = [m, I, J, K] * n$
+- $n^2 = p^2 = q^2 = r^2 = -1$
+- $M^2 = P^2 = Q^2 = R^2 = -1$
 
 ```python
 # NOTE: Takes less than 1s

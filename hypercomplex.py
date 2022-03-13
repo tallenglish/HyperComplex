@@ -1,13 +1,13 @@
 import numpy as np
 import pylab as pyl
 import itertools as it
+import functools as ft
 import matplotlib as mpl
 import graph_tool.draw as gtd
 import graph_tool as gt
 import seaborn as sb
 import networkx as nx
 import numbers as nm
-import functools as ft
 
 class Numeric(nm.Number):
 
@@ -107,9 +107,9 @@ def mathdunders(base=None, dunders=dunders, force=False):
 
 	return decorator
 
-memoize_enabled = True
+enable_cache = True
 
-def memoize(self):
+def cached(self):
 
 	cache = self.cache = {}
 
@@ -126,7 +126,7 @@ def memoize(self):
 
 		return self(*args)
 
-	return enabled if memoize_enabled else disabled
+	return enabled if enable_cache else disabled
 
 def cayley_dickson_real_base(base=float):
 
@@ -717,7 +717,7 @@ def cayley_dickson_construction(parent):
 
 			return HyperComplex(other) + self
 
-		@memoize
+		@cached
 		def __mul__(self, other):
 
 			other = HyperComplex.coerce(other)
@@ -731,7 +731,7 @@ def cayley_dickson_construction(parent):
 
 			return HyperComplex(a, b)
 
-		@memoize
+		@cached
 		def __rmul__(self, other):
 
 			return HyperComplex(other) * self
@@ -768,7 +768,7 @@ def cayley_dickson_construction(parent):
 
 			return HyperComplex(other) - self
 
-		@memoize
+		@cached
 		def __truediv__(self, other):
 
 			base = HyperComplex.base()
@@ -789,7 +789,7 @@ def cayley_dickson_construction(parent):
 
 			return self * other
 
-		@memoize
+		@cached
 		def __rtruediv__(self, other):
 
 			return HyperComplex(other) / self
