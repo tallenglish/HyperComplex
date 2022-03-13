@@ -25,11 +25,13 @@ The following packages are required, specifially for the graphical functionality
 - numpy
 - pylab
 - itertools
+- functools
 - matplotlib
 - graph_tool
 - graph_tool.draw
 - seaborn
 - networkx
+- numbers
 
 ### **`Import HyperComplex Library`**
 
@@ -71,6 +73,7 @@ print(len(AG))
 print(AA.square())
 print(AA.norm())
 print(AA.inverse())
+print(1 / AA)
 ```
 
 ```
@@ -82,6 +85,7 @@ True
 512
 30.0
 5.477225575051661
+(0.0333333 -0.0666667 -0.1 -0.133333)
 (0.0333333 -0.0666667 -0.1 -0.133333)
 ```
 
@@ -158,9 +162,12 @@ A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that
 
 
 ```python
-Complex().group(translate=True)
-Complex().plot(diverging=True)
 # NOTE: Takes less than 1s
+
+X = Complex()
+
+X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Complex](images/group2.png "Complex")
@@ -171,9 +178,12 @@ Complex().plot(diverging=True)
 [Quaternions](http://en.wikipedia.org/wiki/Quaternion) are a normed division algebra over the real numbers that can be expressed in the form `a + bi + cj + dk`, where `a`, `b`, `c` and `d` are real numbers and `i`, `j`, `k` are the imaginary units.  They are noncommutative. The unit quaternions can be thought of as a choice of a group structure on the 3-sphere S3 that gives the group Spin(3), which is isomorphic to SU(2) and also to the universal cover of SO(3).
 
 ```python
-Quaternion().group(translate=True)
-Quaternion().plot(diverging=True)
 # NOTE: Takes less than 1s
+
+X = Quaternion()
+
+X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Quaternions](images/group4.png "Quaternions")
@@ -186,9 +196,12 @@ Quaternion().plot(diverging=True)
 The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals.
 
 ```python
-Octonion().group(translate=True)
-Octonion().plot(diverging=True)
 # NOTE: Takes less than 1s
+
+X = Octonion()
+
+X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Octionion](images/group8.png "Octonion")
@@ -199,8 +212,12 @@ Octonion().plot(diverging=True)
 [Sedenion](http://en.wikipedia.org/wiki/Sedenion) orm a 16-dimensional noncommutative and nonassociative algebra over the reals obtained by applying the Cayley–Dickson construction to the octonions. That can be expressed in the form `a + i + j + k + m + I + J + K...`, where `a...` are real numbers and `i, j, k, m, I, J, K, n, p, q, r, M, P, Q, R` are the imaginary units.
 
 ```python
-Sedenion().plot(diverging=True)
 # NOTE: Takes less than 1s
+
+X = Sedenion()
+
+# X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Sedenion](images/sedenion.png "Sedenion")
@@ -210,8 +227,12 @@ Sedenion().plot(diverging=True)
 Pathions form a 32-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the sedenions.
 
 ```python
-Pathion().plot(diverging=True)
-# NOTE: Takes about 10s
+# NOTE: Takes about 5s
+
+X = Pathion()
+
+# X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Pathion](images/pathion.png "Pathion")
@@ -221,8 +242,12 @@ Pathion().plot(diverging=True)
 Chingons form a 64-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the pathion.
 
 ```python
-Chingon().plot(diverging=True)
-# NOTE: Can take 1m50s
+# NOTE: Takes about 30s
+
+X = Chingon()
+
+# X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Chingon](images/chingon.png "Chingon")
@@ -232,8 +257,12 @@ Chingon().plot(diverging=True)
 Routons form a 128-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the chingons.
 
 ```python
-Routon().plot(diverging=True)
-# NOTE: Takes a very long time
+# NOTE: Takes about 4m30s
+
+X = Routon()
+
+# X.group(translate=True)
+X.plot(diverging=True)
 ```
 
 ![Routon](images/routon.png "Routon")
@@ -243,8 +272,12 @@ Routon().plot(diverging=True)
 Voudons form a 256-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the routons.
 
 ```python
-Voudon().plot(diverging=True)
-# NOTE: Takes a very long time
+# NOTE: Takes very long time
+
+X = Voudon()
+
+# X.group(translate=True)
+# X.plot(diverging=True)
 ```
 
 ![Voudon](images/voudon.png "Voudon")

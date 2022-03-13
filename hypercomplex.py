@@ -1,21 +1,136 @@
-#!/usr/anaconda3/bin/python
+import numpy as np
+import pylab as pyl
+import itertools as it
+import matplotlib as mpl
+import graph_tool.draw as gtd
+import graph_tool as gt
+import seaborn as sb
+import networkx as nx
+import numbers as nm
+import functools as ft
 
-from helpers import mathdunders, memoize
-from classes import Numeric
-from numbers import Number
+class Numeric(nm.Number):
 
-import numpy
-import pylab
-import itertools
-import matplotlib
-import graph_tool
-import graph_tool.draw
-import seaborn
-import networkx
+	def copy(self):
+
+		return self.__class__(self)
+
+	def inverse(self):
+
+		return self.conjugate() / self.square()
+
+	def square(self):
+
+		return (self.conjugate() * self).real
+
+	def norm(self):
+
+		return np.sqrt(self.square())
+
+	def __abs__(self):
+
+		return self.norm()
+
+	def __len__(self):
+
+		return self.dimensions
+
+	def __getitem__(self, index):
+
+		return self.coefficients()[index]
+
+	def __contains__(self, needle):
+
+		return needle in self.coefficients()
+
+	def __str__(self):
+
+		return format(self)
+
+	def __repr__(self):
+
+		return str(self)
+
+	def __format__(self, spec):
+
+		if not spec:
+
+			spec = "g"
+
+		coefficients = [f"{c:{spec}}" for c in self.coefficients()]
+
+		return "(" + " ".join(coefficients) + ")"
+
+unitary_fn = "abs ceil floor neg pos round trunc".split()
+binary_fn = "add divmod floordiv mod mul pow sub truediv".split()
+reverse_fn = [F"r{name}" for name in binary_fn]
+
+dunders = tuple(f"__{name}__" for name in unitary_fn + binary_fn + reverse_fn)
+
+def mathdunders(base=None, dunders=dunders, force=False):
+
+	def decorator(cls):
+
+		nonlocal base
+
+		if base is None:
+
+			base = cls.__bases__[0]
+
+		def add_dunder(name):
+
+			def dunder(self, *args):
+
+				result = getattr(base(self), name)(*args)
+
+				if result is NotImplemented:
+
+					return NotImplemented
+
+				if type(result) is tuple:
+
+					return tuple(map(cls, result))
+
+				return cls(result)
+
+			return dunder
+
+		for name in dunders:
+
+			cls_has_dunder = hasattr(cls, name) and getattr(cls, name) is not getattr(base, name)
+
+			if force or not cls_has_dunder:
+
+				setattr(cls, name, add_dunder(name))
+
+		return cls
+
+	return decorator
+
+memoize_enabled = True
+
+def memoize(self):
+
+	cache = self.cache = {}
+
+	@ft.wraps(self)
+	def enabled(*args):
+
+		if args not in cache:
+
+			cache[args] = self(*args)
+
+		return cache[args]
+
+	def disabled(*args):
+
+		return self(*args)
+
+	return enabled if memoize_enabled else disabled
 
 def cayley_dickson_real_base(base=float):
 
-	if not issubclass(base, Number):
+	if not issubclass(base, nm.Number):
 
 		raise TypeError("The base type must be derived from numbers.Number.")
 
@@ -105,7 +220,7 @@ def cayley_dickson_construction(parent):
 
 			basis = ("basis" in args and [args["basis"]] or [None])[0]
 
-			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
+			base = ((basis != None and isinstance(basis, nm.Number)) and [basis] or [self.base()])[0]
 			result = [base(0)] * self.dimensions
 			result[index] = base(1)
 
@@ -115,7 +230,7 @@ def cayley_dickson_construction(parent):
 
 			basis = ("basis" in args and [args["basis"]] or [None])[0]
 
-			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
+			base = ((basis != None and isinstance(basis, nm.Number)) and [basis] or [self.base()])[0]
 			coefficients = self.coefficients()
 			result = [base(0)] * self.dimensions
 			result[index] = coefficients[index]
@@ -138,7 +253,7 @@ def cayley_dickson_construction(parent):
 			index        = ("index"        in args and [args["index"]]        or [None])[0]
 			value        = ("value"        in args and [args["value"]]        or [input])[0]
 
-			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
+			base = ((basis != None and isinstance(basis, nm.Number)) and [basis] or [self.base()])[0]
 			translations = list(translations)
 
 			# index, value filters
@@ -202,7 +317,7 @@ def cayley_dickson_construction(parent):
 
 		def zero(self):
 
-			if isinstance(self.a, Number):
+			if isinstance(self.a, nm.Number):
 
 				return HyperComplex(0, 0)
 
@@ -258,7 +373,7 @@ def cayley_dickson_construction(parent):
 
 		def __iter__(self):
 
-			if isinstance(self.a, Number):
+			if isinstance(self.a, nm.Number):
 
 				yield self.a
 				yield self.b
@@ -332,7 +447,7 @@ def cayley_dickson_construction(parent):
 			asobject = ("asobject" in args and [args["asobject"]] or [False])[0]
 			basis    = ("basis"    in args and [args["basis"]]    or [None])[0]
 
-			base = ((basis != None and isinstance(basis, Number)) and [basis] or [self.base()])[0]
+			base = ((basis != None and isinstance(basis, nm.Number)) and [basis] or [self.base()])[0]
 
 			other = HyperComplex.coerce(other)
 
@@ -400,7 +515,7 @@ def cayley_dickson_construction(parent):
 
 			def edge_matrix(idx):
 
-				ex = numpy.zeros((size, size), dtype=int)
+				ex = np.zeros((size, size), dtype=int)
 
 				for k in range(size):
 
@@ -437,11 +552,11 @@ def cayley_dickson_construction(parent):
 			] * 10
 
 			size = len(self) * 2
-			groups = numpy.zeros((size, size), dtype=int)
+			groups = np.zeros((size, size), dtype=int)
 			members = identity()
 			connections = []
 
-			for a, b in itertools.product(members, repeat=2):
+			for a, b in it.product(members, repeat=2):
 
 				x = itgroups(a)
 				y = itgroups(b)
@@ -452,17 +567,17 @@ def cayley_dickson_construction(parent):
 			for k in range(1, size):
 
 				connections.append(edge_matrix(k))
-				g = networkx.from_numpy_matrix(sum(connections))
+				g = nx.from_numpy_matrix(sum(connections))
 
-				if networkx.is_connected(g):
+				if nx.is_connected(g):
 
 					break
 
-			g_loop = networkx.from_numpy_matrix(connections[0])
-			loops = sorted(list(networkx.connected_components(g_loop)))
-			loops = [numpy.roll(x, -k) for k, x in enumerate(loops)]
-			square = numpy.array([[-1, -1.0], [-1, 1], [1, 1], [1, -1]]) * (1 / numpy.sqrt(2))
-			g = graph_tool.Graph(directed=True)
+			g_loop = nx.from_numpy_matrix(connections[0])
+			loops = sorted(list(nx.connected_components(g_loop)))
+			loops = [np.roll(x, -k) for k, x in enumerate(loops)]
+			square = np.array([[-1, -1.0], [-1, 1], [1, 1], [1, -1]]) * (1 / np.sqrt(2))
+			g = gt.Graph(directed=True)
 			g.add_vertex(size)
 
 			pos = g.new_vertex_property("vector<double>")
@@ -481,7 +596,7 @@ def cayley_dickson_construction(parent):
 
 			for k, c in enumerate(connections):
 
-				edges = zip(*numpy.where(c))
+				edges = zip(*np.where(c))
 
 				for e1, e2 in edges:
 
@@ -497,22 +612,22 @@ def cayley_dickson_construction(parent):
 				"pos": pos,
 			}
 
-			graph_tool.draw.graph_draw(g, **g_args)
+			gtd.graph_draw(g, **g_args)
 
 		def plot(self, **args):
 
 			diverging = ("diverging" in args and [args["diverging"]] or [False])[0]
 
-			seaborn.set_style("white")
+			sb.set_style("white")
 
 			size = len(self)
 			identity = self.matrix(asplots=True)
-			figure, axis = pylab.subplots(figsize=(5.0, 5.0), dpi=100.0)
+			figure, axis = pyl.subplots(figsize=(5.0, 5.0), dpi=100.0)
 			options = (diverging and [2 * size + 1] or [size])[0]
-			palette = seaborn.color_palette("RdBu_r", options)
-			rectangle = matplotlib.patches.Rectangle
+			palette = sb.color_palette("RdBu_r", options)
+			rectangle = mpl.patches.Rectangle
 
-			for (i, j), z in numpy.ndenumerate(identity):
+			for (i, j), z in np.ndenumerate(identity):
 
 				location = (j, size - i - 1)
 				options = (diverging and [int(z) + size] or [abs(int(z)) - 1])[0]
@@ -527,8 +642,8 @@ def cayley_dickson_construction(parent):
 			axis.set_xlim(0, size)
 			axis.set_ylim(0, size)
 
-			pylab.tight_layout()
-			pylab.show()
+			pyl.tight_layout()
+			pyl.show()
 
 		# HyperComplex Comparison
 
@@ -602,6 +717,7 @@ def cayley_dickson_construction(parent):
 
 			return HyperComplex(other) + self
 
+		@memoize
 		def __mul__(self, other):
 
 			other = HyperComplex.coerce(other)
@@ -615,6 +731,7 @@ def cayley_dickson_construction(parent):
 
 			return HyperComplex(a, b)
 
+		@memoize
 		def __rmul__(self, other):
 
 			return HyperComplex(other) * self
@@ -651,6 +768,7 @@ def cayley_dickson_construction(parent):
 
 			return HyperComplex(other) - self
 
+		@memoize
 		def __truediv__(self, other):
 
 			base = HyperComplex.base()
@@ -671,6 +789,7 @@ def cayley_dickson_construction(parent):
 
 			return self * other
 
+		@memoize
 		def __rtruediv__(self, other):
 
 			return HyperComplex(other) / self
