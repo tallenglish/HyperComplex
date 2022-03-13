@@ -179,9 +179,9 @@ X.plot(diverging=True)
 
 The significance of the higher order imaginary units:
 
-- ![equation](https://latex.codecogs.com/svg.latex?i = jk, j = ki, k = ij)
-- ![equation](https://latex.codecogs.com/svg.latex?i^2 = j^2 = k^2 = -1)
-- ![equation](https://latex.codecogs.com/svg.latex?ijk = -1)
+- i = jk, j = ki, k = ij
+- i*i = j*j = k*k = -1
+- ijk = -1
 
 ```python
 # NOTE: Takes less than 1s
@@ -201,9 +201,9 @@ X.plot(diverging=True)
 
 The significance of the higher order imaginary units:
 
-- $[m, I, J, K] = [1, i, j, k] * m$
-- $I^2 = J^2 = K^2 = m^2 = -1$
-- $IJK = m$
+- [m, I, J, K] = [1, i, j, k] * m
+- I*I = J*J = K*K = m*m = -1
+- IJK = m
 
 The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals.
 
@@ -225,10 +225,10 @@ X.plot(diverging=True)
 
 The significance of the higher order imaginary units:
 
-- $[n, p, q, r] = [1, i, j, k] * n$
-- $[M, P, Q, R] = [m, I, J, K] * n$
-- $n^2 = p^2 = q^2 = r^2 = -1$
-- $M^2 = P^2 = Q^2 = R^2 = -1$
+- [n, p, q, r] = [1, i, j, k] * n
+- [M, P, Q, R] = [m, I, J, K] * n
+- n*n = p*p = q*q = r*r = -1
+- M*M = P*P = Q*Q = R*R = -1
 
 ```python
 # NOTE: Takes less than 1s
