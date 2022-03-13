@@ -231,6 +231,8 @@ The significance of the higher order imaginary units:
 - [M, P, Q, R] = [m, I, J, K] * n
 - n * n = p * p = q * q = r * r = -1
 - M * M = P * P = Q * Q = R * R = -1
+- p * q * r = n
+- P * Q * R = M
 
 ```python
 # NOTE: Takes less than 1s
