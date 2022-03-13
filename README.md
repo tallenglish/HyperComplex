@@ -179,9 +179,9 @@ X.plot(diverging=True)
 
 The significance of the higher order imaginary units:
 
-- $i = jk, j = ki, k = ij$
-- $i^2 = j^2 = k^2 = -1$
-- $ijk = -1$
+- ![equation](https://latex.codecogs.com/svg.latex?i = jk, j = ki, k = ij)
+- ![equation](https://latex.codecogs.com/svg.latex?i^2 = j^2 = k^2 = -1)
+- ![equation](https://latex.codecogs.com/svg.latex?ijk = -1)
 
 ```python
 # NOTE: Takes less than 1s
