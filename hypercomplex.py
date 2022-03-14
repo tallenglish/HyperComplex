@@ -254,6 +254,7 @@ def cayley_dickson_construction(parent):
 			value        = ("value"        in args and [args["value"]]        or [input])[0]
 
 			base = ((basis != None and isinstance(basis, nm.Number)) and [basis] or [self.base()])[0]
+
 			translations = list(translations)
 
 			# index, value filters
@@ -282,8 +283,12 @@ def cayley_dickson_construction(parent):
 				# starting arrays, group() also shows negativity as > len(self)
 				# numbering
 
-				value = (input >= len(self) and [base(-1)] or [base(1)])[0]
-				index = (input >= len(self) and [input - len(self)] or [input])[0]
+				is_negative = index >= len(self)
+
+				if asstring and translate:
+
+					value = (is_negative and [base(-1)] or [base(+1)])[0]
+					index = (is_negative and [index - len(self)] or [index])[0]
 
 			sign  = ((value < 0) and ["-"] or [""])[0]
 
@@ -485,11 +490,44 @@ def cayley_dickson_construction(parent):
 
 				for i in range(len(result)):
 
+					temp = HyperComplex(0)
+
 					for j in range(len(result)):
 
-						result[i][j] = HyperComplex(result[i][j])
+						temp += result[i][j]
+
+					result[i] = HyperComplex(temp)
 
 			result = self.matrixdisplay(result, **args)
+
+			return result
+
+		# Output Types
+		# Don't Use __str__ or __repr__ as they break other functions
+
+		def asobject(self):
+
+			return self
+
+		def astuple(self):
+
+			return tuple(self.coefficients())
+
+		def aslist(self):
+
+			return list(self.coefficients())
+
+		def asstring(self, **args):
+
+			values = list(map(self.values, range(self.dimensions)))
+			values = [self.named(i, asstring=True, **args) for i in values]
+			values = [str(row) for row in values]
+
+			result = values.pop(0)
+
+			for value in values:
+
+				result += (value[:1] == "-" and [" - " + value[1:]] or [" + " + value])[0]
 
 			return result
 
@@ -499,13 +537,34 @@ def cayley_dickson_construction(parent):
 
 		def group(self, **args):
 
+			if self.dimensions > 16:
+
+				return NotImplemented
+
 			translate = ("translate" in args and [args["translate"]] or [False])[0]
 
-			def identity():
+			def KD_matrix(X, Y, dtype=str):
+
+				Z = []
+
+				for _ in range(0, X):
+
+					T = []
+
+					for _ in range(0, Y):
+
+						T.append(dtype())
+
+					Z.append(T)
+
+				return Z
+
+			def KD_identity():
 
 				sz  = len(self)
-				id  = [[(i == j and  [1] or [0])[0] for j in range(0, sz)] for i in range(0, sz)]
-				id += [[(i == j and [-1] or [0])[0] for j in range(0, sz)] for i in range(0, sz)]
+				rg  = range(0, sz)
+				id  = [[(i == j and [+1] or [0])[0] for j in rg] for i in rg]
+				id += [[(i == j and [-1] or [0])[0] for j in rg] for i in rg]
 
 				for i in range(0, sz * 2):
 
@@ -513,17 +572,17 @@ def cayley_dickson_construction(parent):
 
 				return id
 
-			def edge_matrix(idx):
+			def KD_edges(idx):
 
-				ex = np.zeros((size, size), dtype=int)
+				edge = np.zeros(groups.shape, dtype=int)
 
 				for k in range(size):
 
-					ex[k][groups[k][idx]] = 1
+					edge[k, groups[k, idx]] = 1
 
-				return ex
+				return edge
 
-			def itgroups(input):
+			def KD_groups(input):
 
 				if not input:
 
@@ -540,6 +599,18 @@ def cayley_dickson_construction(parent):
 
 				return index
 
+			def KD_sorter(input):
+
+					test = input.tolist()
+					test = sorted(test)
+					work = [int(0)] * len(test)
+
+					for i in range(len(test)):
+
+						work[i] = test[i]
+
+					return sorted(work)
+
 			edge_color_set = [
 				(0.89411765336990356, 0.10196078568696976, 0.1098039224743843100, 0.9),
 				(0.21602460800432691, 0.49487120380588606, 0.7198769869757634100, 0.9),
@@ -553,63 +624,91 @@ def cayley_dickson_construction(parent):
 
 			size = len(self) * 2
 			groups = np.zeros((size, size), dtype=int)
-			members = identity()
+			squares = KD_matrix(size, size, str)
+			members = KD_identity()
 			connections = []
 
 			for a, b in it.product(members, repeat=2):
 
-				x = itgroups(a)
-				y = itgroups(b)
-				z = itgroups(a * b)
+				x = KD_groups(a)
+				y = KD_groups(b)
+				z = KD_groups(a * b)
 
 				groups[x, y] = z
 
 			for k in range(1, size):
 
-				connections.append(edge_matrix(k))
+				connections.append(KD_edges(k))
 				g = nx.from_numpy_matrix(sum(connections))
 
 				if nx.is_connected(g):
 
 					break
 
+			a, b = KD_matrix(8, 2, float), KD_matrix(8, 2, float)
+			c, d = KD_matrix(8, 2, float), KD_matrix(8, 2, float)
+
+			a[0], b[0], c[0], d[0] = [+1.00, +0.00], [+0.00, -1.00], [-1.00, +0.00], [+0.00, +1.00] # +1, +i, -1, -i Complex
+			a[1], b[1], c[1], d[1] = [-1.50, -1.50], [-1.50, +1.50], [+1.50, +1.50], [+1.50, -1.50] # +j, +k, -j, -k Quaternion
+			a[2], b[2], c[2], d[2] = [-2.00, -3.00], [-3.00, -2.00], [+2.00, +3.00], [+3.00, +2.00] # +m, +I, -m, -I Octonion
+			a[3], b[3], c[3], d[3] = [-3.00, +2.00], [-2.00, +3.00], [+3.00, -2.00], [+2.00, -3.00] # +J, +K, -J, -K Octonion
+			a[4], b[4], c[4], d[4] = [-2.00, -4.00], [-2.50, -3.50], [+2.00, +4.00], [+2.50, +3.50] # +n, +p, -m, -p Sedenion
+			a[5], b[5], c[5], d[5] = [-3.50, -2.50], [-4.00, -2.00], [+3.50, +2.50], [+4.00, +2.00] # +q, +r, -q, -r Sedenion
+			a[6], b[6], c[6], d[6] = [-4.00, +2.00], [-3.50, +2.50], [+4.00, -2.00], [+3.50, -2.50] # +M, +P, -M, -P Sedenion
+			a[7], b[7], c[7], d[7] = [-2.50, +3.50], [-2.00, +4.00], [+2.50, -3.50], [+2.00, -4.00] # +Q, +R, -Q, -R Sedenion
+
+			squares = KD_matrix(8, 8, str)
+
+			for i in range(8):
+
+				squares[i] = np.array([a[i], b[i], c[i], d[i]])
+
+				# y :=    [-Left/+Right,-Top/+Bottom]
+				# x == 0: Left/Top     +1
+				# x == 1: Left/Bottom  +i
+				# x == 2: Right/Bottom -1
+				# x == 3: Right/Top    -i
+
 			g_loop = nx.from_numpy_matrix(connections[0])
-			loops = sorted(list(nx.connected_components(g_loop)))
+
+			loops = nx.connected_components(g_loop)
 			loops = [np.roll(x, -k) for k, x in enumerate(loops)]
-			square = np.array([[-1, -1.0], [-1, 1], [1, 1], [1, -1]]) * (1 / np.sqrt(2))
+
 			g = gt.Graph(directed=True)
 			g.add_vertex(size)
 
-			pos = g.new_vertex_property("vector<double>")
+			position = g.new_vertex_property("vector<double>")
 			label = g.new_vertex_property("string")
 
-			for k, loop in enumerate(loops):
+			for id, loop in enumerate(loops):
 
-				for idx, r in zip(loop.tolist(), square):
+				loop = KD_sorter(loop)
 
-					v = g.vertex(idx)
-					name = self.named(idx, asgroups=True, asstring=True, translate=translate)
-					pos[v] = r * (k + 1)
-					label[v] = name
+				for index, location in zip(loop, squares[id]):
+
+					v = g.vertex(index)
+
+					label[v] = self.named(1, index=index, asgroups=True, **args)
+					position[v] = location
 
 			edge_color = g.new_edge_property("vector<double>")
 
-			for k, c in enumerate(connections):
+			for id, connection in enumerate(connections):
 
-				edges = zip(*np.where(c))
+				edges = zip(*np.where(connection))
 
 				for e1, e2 in edges:
 
-					ex = g.add_edge(e1, e2)
-					edge_color[ex] = edge_color_set[k]
+					edge = g.add_edge(e1, e2)
+					edge_color[edge] = edge_color_set[id]
 
 			g_args = {
 				"edge_color": edge_color,
-				"output_size": (500,500),
+				"output_size": (600,600),
+				"vertex_font_size": 18,
 				"vertex_text": label,
-				"vertex_font_size": 14,
-				"vertex_size": 40,
-				"pos": pos,
+				"vertex_size": 30,
+				"pos": position,
 			}
 
 			gtd.graph_draw(g, **g_args)
@@ -621,13 +720,13 @@ def cayley_dickson_construction(parent):
 			sb.set_style("white")
 
 			size = len(self)
-			identity = self.matrix(asplots=True)
+			KD_identity = self.matrix(asplots=True)
 			figure, axis = pyl.subplots(figsize=(5.0, 5.0), dpi=100.0)
 			options = (diverging and [2 * size + 1] or [size])[0]
 			palette = sb.color_palette("RdBu_r", options)
 			rectangle = mpl.patches.Rectangle
 
-			for (i, j), z in np.ndenumerate(identity):
+			for (i, j), z in np.ndenumerate(KD_identity):
 
 				location = (j, size - i - 1)
 				options = (diverging and [int(z) + size] or [abs(int(z)) - 1])[0]

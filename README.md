@@ -18,6 +18,8 @@ This package is a combination of the work done by [discretegames](https://github
 
 This library however has been taylored to use ***`Jupiter Notebook`***, and the native notebook functionality of Visual Studio Code rather than work as command line tools.  I have also added to these base packages, functionality for `inner, outer and hadamard products`.
 
+Another significant update is the `HyperComplex.group()` function which has been updated to better display the rotational transforms up to `Octonions`, `Sedenions` are also included, but as you will see it is very complex and not very useful when displayed in 2D.
+
 ### **`Requirements`**
 
 The following packages are required, specifially for the graphical functionality, if you remove the HyperComplex.group() and HyperComplex.plot() methods, you no longer need these requirements and the package can work standalone:
@@ -60,7 +62,7 @@ AA = H(1,2,3,4)
 AB = H(Complex(1,2),C(3,4))
 AC = H((1,2),(3,4))
 AD = H((1,2,3,4))
-AE = H([1,2,3,4])
+AE = H([1,-2,-3,-4])
 AF = O()
 AG = cayley_dickson_construction(V)()
 
@@ -95,10 +97,7 @@ True
 print("Real Part:\n",           AA.real, "\n")
 print("Imaginary Part:\n",      AA.imag, "\n")
 print("Coefficients:\n",        AA.coefficients(), "\n")
-print("Conjugate Transpose:\n", AA.conjugate(), "\n")
-print("Inner Product:\n",       AA.innerproduct(AB), "\n")
-print("Outer Product:\n",       AA.outerproduct(AB, asstring=True, translate=True), "\n")
-print("Hadamard Product:\n",    AA.hadamardproduct(AB, asobject=True))
+print("Conjugate Transpose:\n", AA.conjugate())
 ```
 
 ```
@@ -113,7 +112,40 @@ Coefficients:
 
 Conjugate Transpose:
  (1 -2 -3 -4)
+```
 
+```python
+print("String Format:\n",       AA.asstring(translate=True), "\n")
+print("String Format:\n",       AE.asstring(translate=True), "\n")
+print("Tuple Format:\n",        AA.astuple(), "\n")
+print("List Format:\n",         AA.aslist(), "\n")
+print("Object Format:\n",       AA.asobject())
+```
+
+```
+String Format:
+ 1 + 2.0i + 3.0j + 4.0k
+
+String Format:
+ 1 - 2.0i - 3.0j - 4.0k
+
+Tuple Format:
+ (1.0, 2.0, 3.0, 4.0)
+
+List Format:
+ [1.0, 2.0, 3.0, 4.0]
+
+Object Format:
+ (1 2 3 4)
+```
+
+```python
+print("Inner Product:\n",       AA.innerproduct(AB), "\n")
+print("Outer Product:\n",       AA.outerproduct(AB, asstring=True, translate=True), "\n")
+print("Hadamard Product:\n",    AA.hadamardproduct(AB, asobject=True))
+```
+
+```
 Inner Product:
  30.0
 
@@ -131,21 +163,25 @@ Hadamard Product:
 
 These can have various options to alter how the data is handed back, `asstring=True` will output the array as a string, adding by default `e0, e1, ...` as the index names, however you can add `translate=True` to change them to `1 + i + j + k, ...` format.  You can also use custom indexes by either changing the `element=e` option or `translations=1ijkmIJKnpqrMPQR` option.
 
-If you select `asobject=True` then the function will output HyperComplex objects, and `asnumber=True` will return a list array.  There is also `asgroups=True` and `asplots=True`, however they are mainly used to facilitate the graphical features of the library.
+If you select `asobject=True` then the function will output list of HyperComplex objects, and `asnumber=True` will return a list array.  There is also `asgroups=True` and `asplots=True`, however they are mainly used to facilitate the graphical features of the library.
 
 ```python
-print("Multiplication Matrix:\n", AA.matrix(asstring=True, translate=True), "\n")
-print("Multiplication ID:\n",     AA.matrix(asplots=True, asstring=True))
+print("String Matrix:\n",       AA.matrix(asstring=True, translate=True), "\n")
+print("Object Matrix:\n",       AA.matrix(asobject=True), "\n")
+print("Plot ID:\n",             AA.matrix(asplots=True, asstring=True))
 ```
 
 ```
-Multiplication Matrix:
+String Matrix:
  1  i  j  k
  i -1  k -j
  j -k -1  i
  k  j -i -1
 
-Multiplication ID:
+Object Matrix:
+ [(1 1 1 1), (-1 1 -1 1), (-1 1 1 -1), (-1 -1 1 1)]
+
+Plot ID:
  1  2  3  4
  2 -1  4 -3
  3 -4 -1  2
@@ -160,18 +196,25 @@ For the `HyperComplex.plot()` method, which produces images so we can visualize 
 
 A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that can be expressed in the form `a + bi`, where `a` and `b` are real numbers and `i` is the imaginary unit, imaginary being the root of a negative square number `i = sqrt(-1)`. They are a normed division algebra over the real numbers. There is no natural linear ordering (commutativity) on the set of complex numbers.
 
+The significance of the imaginary unit:
+
+- i * i = -1
+
+- `red` lines show multiplication of complex index `i`.
 
 ```python
 # NOTE: Takes less than 1s
 
 X = Complex()
 
-X.group(translate=True)
+X.group(asstring=True, translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
-![Complex](images/group2.png "Complex")
+![Complex](images/complex_g.png "Complex")
 ![Complex](images/complex.png "Complex")
+![Complex](images/complex_d.png "Complex")
 
 ### **`Quaternion Numbers`**
 
@@ -185,17 +228,22 @@ The significance of the higher order imaginary units:
 - i * i = j * j = k * k = -1
 - i * j * k = -1
 
+- `red` lines show multiplication of complex index `i`.
+- `blue` lines show multiplication of complex index `j`.
+
 ```python
 # NOTE: Takes less than 1s
 
 X = Quaternion()
 
-X.group(translate=True)
+X.group(asstring=True, translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
-![Quaternions](images/group4.png "Quaternions")
+![Quaternions](images/quaternion_g.png "Quaternions")
 ![Quaternions](images/quaternion.png "Quaternions")
+![Quaternions](images/quaternion_d.png "Quaternions")
 
 ### **`Octonion Numbers`**
 
@@ -207,19 +255,24 @@ The significance of the higher order imaginary units:
 - I * I = J * J = K * K = m * m = -1
 - I * J * K = m
 
-The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals.
+- `red` lines show multiplication of complex index `i`.
+- `blue` lines show multiplication of complex index `j`.
+- `green` lines show multiplication of complex index `k`.
+- `purple` lines show multiplication of complex index `m`.
 
 ```python
-# NOTE: Takes less than 1s
+# NOTE: Takes about 2s
 
 X = Octonion()
 
-X.group(translate=True)
+X.group(asstring=True, translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
-![Octionion](images/group8.png "Octonion")
+![Octonion](images/octonion_g.png "Octonion")
 ![Octonion](images/octonion.png "Octonion")
+![Octonion](images/octonion_d.png "Octonion")
 
 ### **`Sedenion Numbers`**
 
@@ -235,64 +288,78 @@ The significance of the higher order imaginary units:
 - P * Q * R = M
 
 ```python
-# NOTE: Takes less than 1s
+# NOTE: Takes about 3s
 
 X = Sedenion()
 
-# X.group(translate=True)
+X.group(asstring=True, translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
+![Sedenion](images/sedenion_g.png "Sedenion")
 ![Sedenion](images/sedenion.png "Sedenion")
+![Sedenion](images/sedenion_d.png "Sedenion")
 
 ### **`Pathion Numbers`**
 
 Pathions form a 32-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the sedenions.
 
+HyperComplex.group() is disabled, as it is far too busy/messy.
+
 ```python
-# NOTE: Takes about 5s
+# NOTE: Takes about 8s
 
 X = Pathion()
 
-# X.group(translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
 ![Pathion](images/pathion.png "Pathion")
+![Pathion](images/pathion_d.png "Pathion")
 
 ### **`Chingon Numbers`**
 
 Chingons form a 64-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the pathion.
 
+HyperComplex.group() is disabled, as it is far too busy/messy.
+
 ```python
-# NOTE: Takes about 30s
+# NOTE: Takes about 50s
 
 X = Chingon()
 
-# X.group(translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
 ![Chingon](images/chingon.png "Chingon")
+![Chingon](images/chingon_d.png "Chingon")
 
 ### **`Routon Numbers`**
 
 Routons form a 128-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the chingons.
 
+HyperComplex.group() is disabled, as it is far too busy/messy.
+
 ```python
-# NOTE: Takes about 4m30s
+# NOTE: Takes about 6m30s
 
 X = Routon()
 
-# X.group(translate=True)
+X.plot(diverging=False)
 X.plot(diverging=True)
 ```
 
 ![Routon](images/routon.png "Routon")
+![Routon](images/routon_d.png "Routon")
 
 ### **`Voudon Numbers`**
 
 Voudons form a 256-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the routons.
+
+HyperComplex.group() is disabled, as it is far too busy/messy.
 
 ```python
 # NOTE: Takes very long time
@@ -303,4 +370,4 @@ X = Voudon()
 # X.plot(diverging=True)
 ```
 
-![Voudon](images/voudon.png "Voudon")
+![Voudon](images/voudon_d.png "Voudon")
