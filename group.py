@@ -51,7 +51,7 @@ def group(self, **args):
 	negatives = args["negatives"] if "negatives" in args else False
 	positives = args["positives"] if "positives" in args else False
 	directed = args["directed"] if "directed" in args else True
-	filename = args["filename"] if "filename" in args else "K{order}"
+	filename = args["filename"] if "filename" in args else "images/G{order}.{extension}"
 	extension = args["extension"] if "extension" in args else "png"
 	fontsize = args["fontsize"] if "fontsize" in args else 18
 	layers = args["layers"] if "layers" in args else ""
@@ -132,48 +132,53 @@ def group(self, **args):
 	for index in range(0, len(layers)):
 
 		temp = layers[index]
+		id = 0
 
-		if temp.isdigit() and int(temp) <= len(indices):
+		if temp[:1] == "-" or temp[:1] == "+": # first handle sign
 
-			layers[index] = int(temp)
+			id += dimensions if temp[:1] == "-" else 0
+			temp = temp[1:]
 
-		elif temp.isalpha() and translate and temp in indices:
+		if element in temp: # handle e0,e12,e4, etc.
 
-			layers[index] = indices.index(temp)
+			x = temp.index(element)
+			id += int(temp[x+1:])
 
-		elif temp.isalpha() and temp[:1] == element:
+		elif temp.isdigit(): # handle numbers
 
-			layers[index] = int(temp[1:])
+			id += int(temp)
 
-		else:
+		elif temp.isalpha() and temp in indices: # handle i,j,k, etc
 
-			del layers[index]
+			id += indices.index(temp)
+
+		layers[index] = id
 
 	if negatives and not positives:
 
-		ranged = range(1 + dimensions, size)
+		ranged = range(dimensions, size)
 
 	elif positives and not negatives:
 
-		ranged = range(1, dimensions)
+		ranged = range(0, dimensions)
 
 	else:
 
-		ranged = range(1, size)
+		ranged = range(0, size)
 
-	layered = layers if len(layers) > 0 and layers[0] != "0" else ranged
-	showall = True if len(layers) > 0 and layers[0] != "0" else showall
+	layered = layers if len(layers) > 0 and layers[0] > 0 else ranged
+	showall = True   if len(layers) > 0 and layers[0] > 0 else showall
 
 	for index in layered:
 
-		if index == 0 or index == dimensions:
+		if index == 0 or index == dimensions: # inore the +1, -1 layers
 
 			continue
 
 		connections.append(KD_edges(index))
 		g = networkx.from_numpy_matrix(sum(connections))
 
-		if networkx.is_connected(g) and not showall:
+		if networkx.is_connected(g) and not (showall or positives or negatives):
 
 			break
 
@@ -221,7 +226,7 @@ def group(self, **args):
 
 	if save:
 
-		output = ((filename).format(order=order) + "." + extension)
+		output = ((filename).format(order=order, extension=extension))
 
 		graph_tool.draw.graph_draw(g, output=output, fmt=extension, **options)
 
@@ -234,7 +239,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("-n", "--order", type=int, default=2)
-	parser.add_argument("-f", "--filename", type=str, default="G{order}")
+	parser.add_argument("-f", "--filename", type=str, default="images/G{order}.{extension}")
 	parser.add_argument("-e", "--extension", type=str, default="png")
 	parser.add_argument("-x", "--fontsize", type=int, default=18)
 	parser.add_argument("-s", "--figsize", type=float, default=6)

@@ -16,24 +16,25 @@ This Python 3 package allows the creation of number classes at any repetition le
 
 This package is a combination of the work done by [discretegames](https://github.com/discretegames) providing the [mathdunders](https://github.com/discretegames/mathdunders) and most of the [hypercomplex](https://github.com/discretegames/hypercomplex) base functionality, but also [thoppe](https://github.com/thoppe) for providing the base graphical plot functionality from [cayley-dickson](https://github.com/thoppe/Cayley-Dickson).
 
-This library however has been taylored to use ***`Jupiter Notebook`***, and the native notebook functionality of Visual Studio Code rather than work as command line tools.  I have also added to these base packages, functionality for `inner, outer and hadamard products`.
+### **`Additions To Above Libraries`**
 
-Another significant update is the `HyperComplex.group()` function which has been updated to better display the rotational transforms up to `Octonions`, `Sedenions` are also included, but as you will see it is very complex and not very useful when displayed in 2D.
+This library has been taylored to use ***`Jupiter / Visual Studio Code Notebooks`*** as well as work with command line for the graphical portions.  I have also added to these base packages, functionality for `inner, outer and hadamard products` as well as extending the graphical capabilities of the Cayley-Dickson graphs to include layers, so as to improve readability when graphing high order complex numbers, sucj as Octonions or Sedenions.  This allows the user to visualise each individual rotation group easilly if so wished, or limit the graph to a specific number of layers, and specific direction of rotation as clockwise `-` and anti-clockwise `+` rotations are handled as seperate layers.
 
 ### **`Requirements`**
 
 The following packages are required, specifially for the graphical functionality, if you remove the HyperComplex.group() and HyperComplex.plot() methods, you no longer need these requirements and the package can work standalone:
 
-- numpy
-- pylab
 - itertools
 - functools
+- argparse
 - matplotlib
 - graph_tool
 - graph_tool.draw
 - seaborn
 - networkx
 - numbers
+- numpy
+- pylab
 
 ### **`Import HyperComplex Library`**
 
@@ -66,29 +67,43 @@ AE = H([1,-2,-3,-4])
 AF = O()
 AG = cayley_dickson_construction(V)()
 
-print(AF + AA)
-print(AF + O(0,AA))
-print(2 * AA)
-print(AA == (1,2,3,4))
-print(len(AA))
-print(len(AG))
-print(AA.square())
-print(AA.norm())
-print(AA.inverse())
-print(1 / AA)
+print("Addition:\n", 			AF + AA, "\n", AF + O(0,AA), "\n")
+print("Multiplication:\n", 		2 * AA, "\n")
+print("Comparison:\n",			AA == (1,2,3,4), "\n")
+print("Lengths:\n",				len(AA), "\n", len(AG), "\n")
+print("Square:\n",				AA.square(), "\n")
+print("Norm:\n",				AA.norm(), "\n")
+print("Inverse:\n",				AA.inverse(), "\n", 1 / AA, "\n")
+print("Cacheing:\n",			H.__mul__.cache_info())
 ```
 
 ```
-(1 2 3 4 0 0 0 0)
-(0 0 0 0 1 2 3 4)
-(2 4 6 8)
-True
-4
-512
-30.0
-5.477225575051661
-(0.0333333 -0.0666667 -0.1 -0.133333)
-(0.0333333 -0.0666667 -0.1 -0.133333)
+Addition:
+ (1 2 3 4 0 0 0 0)
+ (0 0 0 0 1 2 3 4)
+
+Multiplication:
+ (2 4 6 8)
+
+Comparison:
+ True
+
+Lengths:
+ 4
+ 512
+
+Square:
+ 30.0
+
+Norm:
+ 5.477225575051661
+
+Inverse:
+ (0.0333333 -0.0666667 -0.1 -0.133333)
+ (0.0333333 -0.0666667 -0.1 -0.133333)
+
+Cacheing:
+ CacheInfo(hits=103435, misses=100, maxsize=128, currsize=100)
 ```
 
 ### **`HyperComplex Methods`**
@@ -161,14 +176,15 @@ Hadamard Product:
 
 ### **`HyperComplex Multiplication Matricies`**
 
-These can have various options to alter how the data is handed back, `asstring=True` will output the array as a string, adding by default `e0, e1, ...` as the index names, however you can add `translate=True` to change them to `1 + i + j + k, ...` format.  You can also use custom indexes by either changing the `element=e` option or `translations=1ijkmIJKnpqrMPQR` option.
+These can have various options to alter how the data is handed back, `asstring=True` will output the array as a string, adding by default `e0, e1, ...` as the index names, however you can add `translate=True` to change them to `1 + i + j + k, ...` format.  You can also use custom indexes by either changing the `element=e` option or `indices=1ijkmIJKnpqrMPQR` option.
 
-If you select `asobject=True` then the function will output list of HyperComplex objects, and `asnumber=True` will return a list array.  There is also `asgroups=True` and `asplots=True`, however they are mainly used to facilitate the graphical features of the library.
+If you select `asobject=True (default)` then the function will output list of HyperComplex objects, `astuple=True` and `aslist=True` will return a tuple or list array accordingly.  There is also `asindex=True`, which returns the sign and index id for each cell.
 
 ```python
-print("String Matrix:\n",       AA.matrix(asstring=True, translate=True), "\n")
-print("Object Matrix:\n",       AA.matrix(asobject=True), "\n")
-print("Plot ID:\n",             AA.matrix(asplots=True, asstring=True))
+print("String Matrix:\n",		AA.matrix(asstring=True, translate=True), "\n")
+print("String Matrix:\n",		AA.matrix(asstring=True, translate=True, indices="1abcd"), "\n")
+print("Object Matrix:\n",		AA.matrix(asobject=True), "\n")
+print("Index ID:\n",       		AA.matrix(asindex=True, asstring=True))
 ```
 
 ```
@@ -178,10 +194,19 @@ String Matrix:
  j -k -1  i
  k  j -i -1
 
-Object Matrix:
- [(1 1 1 1), (-1 1 -1 1), (-1 1 1 -1), (-1 -1 1 1)]
+String Matrix:
+ 1  a  b  c
+ a -1  c -b
+ b -c -1  a
+ c  b -a -1
 
-Plot ID:
+Object Matrix:
+[[(1 0 0 0), ( 0 1 0 0), (0 0 1 0), (0 0 0 1)],
+ [(0 1 0 0), (-1 0 0 0), (0 0 0 1), (0 0 -1 0)],
+ [(0 0 1 0), ( 0 0 0 -1), (-1 0 0 0), (0 1 0 0)],
+ [(0 0 0 1), ( 0 0 1 0), (0 -1 0 0), (-1 0 0 0)]]
+
+Index ID:
  1  2  3  4
  2 -1  4 -3
  3 -4 -1  2
@@ -200,19 +225,23 @@ The significance of the imaginary unit:
 
 - i * i = -1
 
-- `red` lines show multiplication of complex index `i`.
+In this instance we have selected to show all rotations, both positive and negative, so `red` lines show rotations about `+i`, and `blue` about `-i`.  All Cayley-Dickeson graphs will ignore the rotations about `+1` and `-1` and normally would just show the positive imaginary rotations for brevity.
 
 ```python
-# NOTE: Takes less than 1s
+# NOTE: Takes less than 2s
 
 X = Complex()
 
-X.group(asstring=True, translate=True)
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.group(translate=True, show=True, save=True, filename="images/complex_g_all.png", showall=True)
+X.group(translate=True, show=True, save=True, filename="images/complex_g_pos.png", positives=True)
+X.group(translate=True, show=True, save=True, filename="images/complex_g_neg.png", negatives=True)
+X.plot(diverging=False, show=True, save=True, filename="images/complex.png")
+X.plot(diverging=True, show=True, save=True, filename="images/complex_d.png")
 ```
 
-![Complex](images/complex_g.png "Complex")
+![Complex](images/complex_g_all.png "Complex")
+![Complex](images/complex_g_pos.png "Complex")
+![Complex](images/complex_g_neg.png "Complex")
 ![Complex](images/complex.png "Complex")
 ![Complex](images/complex_d.png "Complex")
 
@@ -228,20 +257,23 @@ The significance of the higher order imaginary units:
 - i * i = j * j = k * k = -1
 - i * j * k = -1
 
-- `red` lines show multiplication of complex index `i`.
-- `blue` lines show multiplication of complex index `j`.
+Here we can see the benefits to splitting out positives and negatives, with `red, blue, green` showing rotations about `+i, +j, +k` respectively and `purple, orange, yellow` showing the negatives.  Even with only three rotations, this graph is starting to look too busy to see clearly, however as we see with only the positive or negative rotations displayed (and only the first three colours required) the three circle groups representing SO(3) can be clearly visible.
 
 ```python
-# NOTE: Takes less than 1s
+# NOTE: Takes less than 2s
 
 X = Quaternion()
 
-X.group(asstring=True, translate=True)
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.group(translate=True, show=True, save=True, filename="images/quaternion_g_all.png", showall=True)
+X.group(translate=True, show=True, save=True, filename="images/quaternion_g_pos.png", positives=True)
+X.group(translate=True, show=True, save=True, filename="images/quaternion_g_neg.png", negatives=True)
+X.plot(diverging=False, show=True, save=True, filename="images/quaternion.png")
+X.plot(diverging=True, show=True, save=True, filename="images/quaternion_d.png")
 ```
 
-![Quaternions](images/quaternion_g.png "Quaternions")
+![Quaternions](images/quaternion_g_all.png "Quaternions")
+![Quaternions](images/quaternion_g_pos.png "Quaternions")
+![Quaternions](images/quaternion_g_neg.png "Quaternions")
 ![Quaternions](images/quaternion.png "Quaternions")
 ![Quaternions](images/quaternion_d.png "Quaternions")
 
@@ -255,22 +287,29 @@ The significance of the higher order imaginary units:
 - I * I = J * J = K * K = m * m = -1
 - I * J * K = m
 
-- `red` lines show multiplication of complex index `i`.
-- `blue` lines show multiplication of complex index `j`.
-- `green` lines show multiplication of complex index `k`.
-- `purple` lines show multiplication of complex index `m`.
+Indices rotations are shown in order, `red` first, `blue` second, `green` third and `purple` forth. Also the inner diamond will always show the first rotational group, in this case `m`, with each subsequent rotational group getting further from the centre.  You can enable the arrows by setting `directed=True`, and you can refernce the layers by name (if using `translate=True`) or by id.
+
+For higher order Cayley-Dickson graphs beyonb quaternions, we now need to the layers functionality of the group function, in this case we have chose to display rotations about `m, i, j, k` in the first graph, and `m, I, J, K` in the second.  Colours will always show in order, of `red, blue, green, purple, orange, yeloow, ...` for the graphs in order.  So in our case here `red, blue, green, purple` represent `+m, +i, +j, +k` or `+m, +I, +J, +K` in order.  Her we are just showing positive translations only.
+
+When using layers, the `positives=True`, `negatives=True` or `showall=True` have no effect as they are assumed by the choice of layers given.
 
 ```python
-# NOTE: Takes about 2s
+# NOTE: Takes about 3s
 
 X = Octonion()
 
-X.group(asstring=True, translate=True)
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.group(translate=True, show=True, layers="m,i,j,k", save=True, filename="images/octonion_g_mijk_pos.png")
+X.group(translate=True, show=True, layers="-m,-i,-j,-k", save=True, filename="images/octonion_g_mijk_neg.png")
+X.group(translate=True, show=True, layers="m,I,J,K", save=True, filename="images/octonion_g_mIJK_pos.png")
+X.group(translate=True, show=True, layers="-m,-I,-J,-K", save=True, filename="images/octonion_g_mIJK_neg.png")
+X.plot(diverging=False, show=True, save=True, filename="images/octonion.png")
+X.plot(diverging=True, show=True, save=True, filename="images/octonion_d.png")
 ```
 
-![Octonion](images/octonion_g.png "Octonion")
+![Octonion](images/octonion_g_mijk_pos.png "Octonion")
+![Octonion](images/octonion_g_mijk_neg.png "Octonion")
+![Octonion](images/octonion_g_mIJK_pos.png "Octonion")
+![Octonion](images/octonion_g_mIJK_neg.png "Octonion")
 ![Octonion](images/octonion.png "Octonion")
 ![Octonion](images/octonion_d.png "Octonion")
 
@@ -287,17 +326,25 @@ The significance of the higher order imaginary units:
 - p * q * r = n
 - P * Q * R = M
 
+Now things are getting very complicated (pun intended), we will only show the positive layers, for each of the four main rotational groups, `m,i,j,k`, `m,I,J,K` as for Octonions and their duals `n,p,q,r` and `M,P,Q,R`.  Even as they are, it is still hard to visualise, but displaying fewer layers per image will rectify that, you need to display a minimum of one layer - so you could just display singular rotational groups for maximum readability.
+
 ```python
-# NOTE: Takes about 3s
+# NOTE: Takes less than 8s
 
 X = Sedenion()
 
-X.group(asstring=True, translate=True)
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.group(translate=True, show=True, layers="m,i,j,k", save=True, filename="images/sedenion_g_mijk_pos.png")
+X.group(translate=True, show=True, layers="m,I,J,K", save=True, filename="images/sedenion_g_mIJK_pos.png")
+X.group(translate=True, show=True, layers="n,p,q,r", save=True, filename="images/sedenion_g_npqr_pos.png")
+X.group(translate=True, show=True, layers="M,P,Q,R", save=True, filename="images/sedenion_g_MPQR_pos.png")
+X.plot(diverging=False, show=True, save=True, filename="images/sedenion.png")
+X.plot(diverging=True, show=True, save=True, filename="images/sedenion_d.png")
 ```
 
-![Sedenion](images/sedenion_g.png "Sedenion")
+![Sedenion](images/sedenion_g_mijk_pos.png "Sedenion")
+![Sedenion](images/sedenion_g_mIJK_pos.png "Sedenion")
+![Sedenion](images/sedenion_g_npqr_pos.png "Sedenion")
+![Sedenion](images/sedenion_g_MPQR_pos.png "Sedenion")
 ![Sedenion](images/sedenion.png "Sedenion")
 ![Sedenion](images/sedenion_d.png "Sedenion")
 
@@ -308,12 +355,12 @@ Pathions form a 32-dimensional algebra over the reals obtained by applying the C
 HyperComplex.group() is disabled, as it is far too busy/messy.
 
 ```python
-# NOTE: Takes about 8s
+# NOTE: Takes about 9s
 
 X = Pathion()
 
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.plot(diverging=False, show=True, save=True, filename="images/pathion.png")
+X.plot(diverging=True, show=True, save=True, filename="images/pathion_d.png")
 ```
 
 ![Pathion](images/pathion.png "Pathion")
@@ -326,12 +373,12 @@ Chingons form a 64-dimensional algebra over the reals obtained by applying the C
 HyperComplex.group() is disabled, as it is far too busy/messy.
 
 ```python
-# NOTE: Takes about 50s
+# NOTE: Takes about 1m
 
 X = Chingon()
 
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.plot(diverging=False, show=True, save=True, filename="images/chingon.png")
+X.plot(diverging=True, show=True, save=True, filename="images/chingon_d.png")
 ```
 
 ![Chingon](images/chingon.png "Chingon")
@@ -344,12 +391,12 @@ Routons form a 128-dimensional algebra over the reals obtained by applying the C
 HyperComplex.group() is disabled, as it is far too busy/messy.
 
 ```python
-# NOTE: Takes about 6m30s
+# NOTE: Takes about 10m40s
 
 X = Routon()
 
-X.plot(diverging=False)
-X.plot(diverging=True)
+X.plot(diverging=False, show=True, save=True, filename="images/routon.png")
+X.plot(diverging=True, show=True, save=True, filename="images/routon_d.png")
 ```
 
 ![Routon](images/routon.png "Routon")
@@ -366,8 +413,8 @@ HyperComplex.group() is disabled, as it is far too busy/messy.
 
 X = Voudon()
 
-# X.group(translate=True)
-# X.plot(diverging=True)
+X.plot(diverging=False, show=True, save=True, filename="images/voudon.png")
+X.plot(diverging=True, show=True, save=True, filename="images/voudon_d.png")
 ```
 
 ![Voudon](images/voudon_d.png "Voudon")

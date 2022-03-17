@@ -18,7 +18,8 @@ def plot(self, **args):
 	figsize = args["figsize"] if "figsize" in args else 6.0
 	negatives = args["negatives"] if "negatives" in args else False
 	diverging = args["diverging"] if "diverging" in args else False
-	filename = args["filename"] if "filename" in args else "K{order}.png"
+	filename = args["filename"] if "filename" in args else "images/K{order}.{extension}"
+	extension = args["extension"] if "extension" in args else "png"
 	save = args["save"] if "save" in args else False
 	show = args["show"] if "show" in args else False
 
@@ -58,9 +59,9 @@ def plot(self, **args):
 
 	if save:
 
-		options = filename.format(order=order, bbox_inches="tight")
+		output = ((filename).format(order=order, extension=extension))
 
-		pylab.savefig(options)
+		pylab.savefig(output)
 
 	if show:
 
@@ -71,7 +72,8 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("-n", "--order", type=int, default=2)
-	parser.add_argument("-f", "--filename", type=str, default="K{order}.png")
+	parser.add_argument("-f", "--filename", type=str, default="images/K{order}.{extension}")
+	parser.add_argument("-e", "--extension", type=str, default="png")
 	parser.add_argument("-s", "--figsize", type=float, default=6)
 	parser.add_argument("-r", "--dpi", type=float, default=100)
 	parser.add_argument("--negatives", action="store_true")
