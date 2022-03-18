@@ -181,7 +181,7 @@ def cayley_dickson_construction(parent):
 			# Optional Arguments
 
 			element = args["element"] if "element" in args else "e"
-			indices = args["indices"] if "indices" in args else "1ijkmIJKnpqrMPQR"
+			indices = args["indices"] if "indices" in args else "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX"
 			translate = args["translate"] if "translate" in args else False
 			asstring = args["asstring"] if "asstring" in args else False
 			asobject = args["asobject"] if "asobject" in args else False
@@ -191,6 +191,7 @@ def cayley_dickson_construction(parent):
 			index = args["index"] if "index" in args else None
 			value = args["value"] if "value" in args else input
 
+			plus = "+" if "showplus" in args and args["showplus"] else ""
 			base = self.base()
 
 			if type(indices) != list:
@@ -237,7 +238,7 @@ def cayley_dickson_construction(parent):
 				# Used bu the HyperComplex.plot() functions to generate
 				# the base matricies used to generate the graphs
 
-				input = F"-{index+1}" if value < 0 else F"{index+1}"
+				input = int(F"-{index+1}") if value < 0 else int(F"{index+1}")
 
 			elif asstring and not (asobject | astuple | aslist):
 
@@ -247,7 +248,7 @@ def cayley_dickson_construction(parent):
 				enabled = translate and self.dimensions <= len(indices)
 				translated = indices[index] if enabled else F"{element}{index}"
 
-				sign = "-" if value < 0 else ""
+				sign = "-" if value < 0 else plus
 				value = "" if abs(value) == base(1) else abs(value)
 				translated = "" if translated == "1" and value else translated
 				input = F"{sign}{value}{translated}"

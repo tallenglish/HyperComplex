@@ -29,7 +29,6 @@ The following packages are required, specifially for the graphical functionality
 - argparse
 - matplotlib
 - graph_tool
-- graph_tool.draw
 - seaborn
 - networkx
 - numbers
@@ -215,7 +214,45 @@ Index ID:
 
 ### **`HyperComplex Graphical Methods`**
 
-For the `HyperComplex.plot()` method, which produces images so we can visualize the multiplication tables with a diverging colormap. Red values are positive, blue values are negative. For example, with the complex numbers 1 => least red, i => most red, -1 => least blue, -i => most blue. Additionally, for the smaller algebras, we can construct the [Cayley Graph](http://en.wikipedia.org/wiki/Cayley_graph) using `HyperComplex.graph()` as shown below for quaternions.  Both methods gain the order from the parent class calling it.
+The `HyperComplex.plot()` method, which produces  images so we can visualize the multiplication tables with either one or two colormaps.  Using the default options and diverging colurmap, `red` displays positive values, `blue`  negative values. For example, with the complex numbers 1 => least red, i => most red, -1 => least blue, -i => most blue.
+
+For a full list of supported colormaps supported by , please visit [Matplotlib Colormaps](https://matplotlib.org/stable/tutorials/colors/colormaps.html)
+
+Options:
+
+- `filename="P{order}.{filetype}"` : images filename E.g. P3.png
+- `filetype="png"` : the file extension used above.
+- `figsize=6.0` : figure size in inches.
+- `figdpi=100.0` : figure dpi (pixels per inch).
+- `colormap="RdBu_r"` : the matpltlib colormap to use for positives and diverging graphs.
+- `ncolormap="PiYG_r"` : the matplotlib colormap to use for negatives.
+- `diverging=False` : use diverging colormap.
+- `negatives=False` : show negative values using ncolormap above (ignored if diverging used).
+- `show=False` : show figure to screen.
+- `save=False` : save figure to disk.
+
+For the smaller algebras (up to Sedenion), we can construct the [Cayley Graph](http://en.wikipedia.org/wiki/Cayley_graph) using `HyperComplex.graph()` to display the various rotations of various imaginary indices as shown below for quaternions.
+
+When displaying edges, the color of the edge will be the same as the vertex points they relate to, E.g. `i` will always be `red`, `j` will be `green` and so on.  Negative rotations will be displayed in a darker variant of the color to stand out.
+
+Options:
+
+- `filename="G{order}.{filetype}"` : images filename E.g. G3.png.
+- `filetype="png"` : the file extension used above.
+- `figsize=6.0` : figure size in inches.
+- `figdpi=100.0` : figure dpi (pixels per inch).
+- `fontsize=14` : font size used for labels.
+- `element="e"` : used when displaying as string, but not translating to index.
+- `indices="1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX"` : used to translate indicies.
+- `layers="..."` : select which rotations to display, can be positive or negative.
+- `translate=False` : tranlates the indicies for easy reading.
+- `positives=False` : show all positive translations.
+- `negatives=False` : show all negative rotations.
+- `directed=True` : show arrows indicating direction of rotation.
+- `translate=False` : tranlates the indicies for easy reading.
+- `showall=False` : show all rotations.
+- `show=False` : show figure to screen.
+- `save=False` : save figure to disk.
 
 ### **`Complex Numbers`**
 
@@ -224,8 +261,6 @@ A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that
 The significance of the imaginary unit:
 
 - i * i = -1
-
-In this instance we have selected to show all rotations, both positive and negative, so `red` lines show rotations about `+i`, and `blue` about `-i`.  All Cayley-Dickeson graphs will ignore the rotations about `+1` and `-1` and normally would just show the positive imaginary rotations for brevity.
 
 ```python
 # NOTE: Takes less than 2s
@@ -257,8 +292,6 @@ The significance of the higher order imaginary units:
 - i * i = j * j = k * k = -1
 - i * j * k = -1
 
-Here we can see the benefits to splitting out positives and negatives, with `red, blue, green` showing rotations about `+i, +j, +k` respectively and `purple, orange, yellow` showing the negatives.  Even with only three rotations, this graph is starting to look too busy to see clearly, however as we see with only the positive or negative rotations displayed (and only the first three colours required) the three circle groups representing SO(3) can be clearly visible.
-
 ```python
 # NOTE: Takes less than 2s
 
@@ -279,43 +312,37 @@ X.plot(diverging=True, show=True, save=True, filename="images/quaternion_d.png")
 
 ### **`Octonion Numbers`**
 
-[Octonions](http://en.wikipedia.org/wiki/Octonion) are a normed division algebra over the real numbers. They are noncommutative and nonassociative, but satisfy a weaker form of associativity, namely they are alternative. The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals. That can be expressed in the form `a + bi + cj + dk + em + fI + gJ + hK`, where `a .. h` are real numbers and `i, j, k, m, I, J, K` are the imaginary units.
+[Octonions](http://en.wikipedia.org/wiki/Octonion) are a normed division algebra over the real numbers. They are noncommutative and nonassociative, but satisfy a weaker form of associativity, namely they are alternative. The Cayley graph is hard project into two-dimensions, there overlapping edges along the diagonals. That can be expressed in the form `a + bi + cj + dk + eL + fI + gJ + hK`, where `a .. h` are real numbers and `i, j, k, L, I, J, K` are the imaginary units.
 
 The significance of the higher order imaginary units:
 
-- [m, I, J, K] = [1, i, j, k] * m
-- I * I = J * J = K * K = m * m = -1
-- I * J * K = m
-
-Indices rotations are shown in order, `red` first, `blue` second, `green` third and `purple` forth. Also the inner diamond will always show the first rotational group, in this case `m`, with each subsequent rotational group getting further from the centre.  You can enable the arrows by setting `directed=True`, and you can refernce the layers by name (if using `translate=True`) or by id.
-
-For higher order Cayley-Dickson graphs beyonb quaternions, we now need to the layers functionality of the group function, in this case we have chose to display rotations about `m, i, j, k` in the first graph, and `m, I, J, K` in the second.  Colours will always show in order, of `red, blue, green, purple, orange, yeloow, ...` for the graphs in order.  So in our case here `red, blue, green, purple` represent `+m, +i, +j, +k` or `+m, +I, +J, +K` in order.  Her we are just showing positive translations only.
-
-When using layers, the `positives=True`, `negatives=True` or `showall=True` have no effect as they are assumed by the choice of layers given.
+- [L, I, J, K] = [1, i, j, k] * L
+- I * I = J * J = K * K = L * L = -1
+- I * J * K = L
 
 ```python
 # NOTE: Takes about 3s
 
 X = Octonion()
 
-X.group(translate=True, show=True, layers="m,i,j,k", save=True, filename="images/octonion_g_mijk_pos.png")
-X.group(translate=True, show=True, layers="-m,-i,-j,-k", save=True, filename="images/octonion_g_mijk_neg.png")
-X.group(translate=True, show=True, layers="m,I,J,K", save=True, filename="images/octonion_g_mIJK_pos.png")
-X.group(translate=True, show=True, layers="-m,-I,-J,-K", save=True, filename="images/octonion_g_mIJK_neg.png")
+X.group(translate=True, show=True, layers="L,i,j,k", save=True, filename="images/octonion_g_Lijk_pos.png")
+X.group(translate=True, show=True, layers="-L,-i,-j,-k", save=True, filename="images/octonion_g_Lijk_neg.png")
+X.group(translate=True, show=True, layers="L,I,J,K", save=True, filename="images/octonion_g_LIJK_pos.png")
+X.group(translate=True, show=True, layers="-L,-I,-J,-K", save=True, filename="images/octonion_g_LIJK_neg.png")
 X.plot(diverging=False, show=True, save=True, filename="images/octonion.png")
 X.plot(diverging=True, show=True, save=True, filename="images/octonion_d.png")
 ```
 
-![Octonion](images/octonion_g_mijk_pos.png "Octonion")
-![Octonion](images/octonion_g_mijk_neg.png "Octonion")
-![Octonion](images/octonion_g_mIJK_pos.png "Octonion")
-![Octonion](images/octonion_g_mIJK_neg.png "Octonion")
+![Octonion](images/octonion_g_Lijk_pos.png "Octonion")
+![Octonion](images/octonion_g_Lijk_neg.png "Octonion")
+![Octonion](images/octonion_g_LIJK_pos.png "Octonion")
+![Octonion](images/octonion_g_LIJK_neg.png "Octonion")
 ![Octonion](images/octonion.png "Octonion")
 ![Octonion](images/octonion_d.png "Octonion")
 
 ### **`Sedenion Numbers`**
 
-[Sedenion](http://en.wikipedia.org/wiki/Sedenion) orm a 16-dimensional noncommutative and nonassociative algebra over the reals obtained by applying the Cayley–Dickson construction to the octonions. That can be expressed in the form `a + i + j + k + m + I + J + K...`, where `a...` are real numbers and `i, j, k, m, I, J, K, n, p, q, r, M, P, Q, R` are the imaginary units.
+[Sedenion](http://en.wikipedia.org/wiki/Sedenion) orm a 16-dimensional noncommutative and nonassociative algebra over the reals obtained by applying the Cayley–Dickson construction to the octonions. That can be expressed in the form `a + i + j + k + L + I + J + K...`, where `a...` are real numbers and `i, j, k, L, I, J, K, m, p, q, r, M, P, Q, R` are the imaginary units.
 
 The significance of the higher order imaginary units:
 
@@ -326,24 +353,24 @@ The significance of the higher order imaginary units:
 - p * q * r = n
 - P * Q * R = M
 
-Now things are getting very complicated (pun intended), we will only show the positive layers, for each of the four main rotational groups, `m,i,j,k`, `m,I,J,K` as for Octonions and their duals `n,p,q,r` and `M,P,Q,R`.  Even as they are, it is still hard to visualise, but displaying fewer layers per image will rectify that, you need to display a minimum of one layer - so you could just display singular rotational groups for maximum readability.
+Now things are getting very complicated (pun intended), we will only show the positive layers, for each of the four main rotational groups, `L,i,j,k`, `L,I,J,K` as for Octonions and their duals `m,p,q,r` and `M,P,Q,R`.  Even as they are, it is still hard to visualise, but displaying fewer layers per image will rectify that, you need to display a minimum of one layer - so you could just display singular rotational groups for maximum readability.
 
 ```python
 # NOTE: Takes less than 8s
 
 X = Sedenion()
 
-X.group(translate=True, show=True, layers="m,i,j,k", save=True, filename="images/sedenion_g_mijk_pos.png")
-X.group(translate=True, show=True, layers="m,I,J,K", save=True, filename="images/sedenion_g_mIJK_pos.png")
-X.group(translate=True, show=True, layers="n,p,q,r", save=True, filename="images/sedenion_g_npqr_pos.png")
+X.group(translate=True, show=True, layers="L,i,j,k", save=True, filename="images/sedenion_g_Lijk_pos.png")
+X.group(translate=True, show=True, layers="L,I,J,K", save=True, filename="images/sedenion_g_LIJK_pos.png")
+X.group(translate=True, show=True, layers="m,p,q,r", save=True, filename="images/sedenion_g_mpqr_pos.png")
 X.group(translate=True, show=True, layers="M,P,Q,R", save=True, filename="images/sedenion_g_MPQR_pos.png")
 X.plot(diverging=False, show=True, save=True, filename="images/sedenion.png")
 X.plot(diverging=True, show=True, save=True, filename="images/sedenion_d.png")
 ```
 
-![Sedenion](images/sedenion_g_mijk_pos.png "Sedenion")
-![Sedenion](images/sedenion_g_mIJK_pos.png "Sedenion")
-![Sedenion](images/sedenion_g_npqr_pos.png "Sedenion")
+![Sedenion](images/sedenion_g_Lijk_pos.png "Sedenion")
+![Sedenion](images/sedenion_g_LIJK_pos.png "Sedenion")
+![Sedenion](images/sedenion_g_mpqr_pos.png "Sedenion")
 ![Sedenion](images/sedenion_g_MPQR_pos.png "Sedenion")
 ![Sedenion](images/sedenion.png "Sedenion")
 ![Sedenion](images/sedenion_d.png "Sedenion")
@@ -352,17 +379,38 @@ X.plot(diverging=True, show=True, save=True, filename="images/sedenion_d.png")
 
 Pathions form a 32-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the sedenions.
 
-HyperComplex.group() is disabled, as it is far too busy/messy.
+The significance of the higher order imaginary units:
+
+- [n, s, t, u] = [1, i, j, k] * n
+- [N, S, T, U] = [L, I, J, K] * n
+- [o, v, w, x] = [m, p, q, r] * n
+- [N, V, W, X] = [m, P, Q, R] * n
+- n * n = s * s = t * t = u * u = o * o = v * v = w * w = x * x = -1
+- N * N = S * S = T * T = U * U = O * O = V * V = W * W = X * X = -1
+- stu = n
+- STU = N
+- vwx = o
+- VWX = O
+
+As before we will only show the positive layers, for each of the four main rotational groups, `1,i,j,k`, `L,I,J,K`, `m,p,q,r` and `M,P,Q,R` for Sedenions we have their duals `n,s,t,u`, `N,S,T,U`, `o,v,w,x`, and `O,V,W,X`.  Even as they are, it is still hard to visualise, but displaying a single layers per image will give maximum readability.
 
 ```python
-# NOTE: Takes about 9s
+# NOTE: Takes about 42s
 
 X = Pathion()
 
+X.group(translate=True, show=True, layers="L", save=True, filename="images/pathion_g_L_pos.png")
+X.group(translate=True, show=True, layers="m", save=True, filename="images/pathion_g_m_pos.png")
+X.group(translate=True, show=True, layers="n", save=True, filename="images/pathion_g_n_pos.png")
+X.group(translate=True, show=True, layers="o", save=True, filename="images/pathion_g_o_pos.png")
 X.plot(diverging=False, show=True, save=True, filename="images/pathion.png")
 X.plot(diverging=True, show=True, save=True, filename="images/pathion_d.png")
 ```
 
+![Pathion](images/pathion_g_L_pos.png "Pathion")
+![Pathion](images/pathion_g_m_pos.png "Pathion")
+![Pathion](images/pathion_g_n_pos.png "Pathion")
+![Pathion](images/pathion_g_o_pos.png "Pathion")
 ![Pathion](images/pathion.png "Pathion")
 ![Pathion](images/pathion_d.png "Pathion")
 

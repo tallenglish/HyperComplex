@@ -1,210 +1,154 @@
 import argparse
 import hypercomplex
-import graph_tool.draw
-import graph_tool
+import definitions
+import graph_tool.all
 import itertools
 import networkx
 import numpy
 
-edge_color_set = [
-	(0.89411765336990356, 0.10196078568696976, 0.1098039224743843100, 0.9),
-	(0.21602460800432691, 0.49487120380588606, 0.7198769869757634100, 0.9),
-	(0.30426760128900115, 0.68329106055054012, 0.2929334996962079700, 0.9),
-	(0.60083047361934883, 0.30814303335021526, 0.6316955229815315300, 0.9),
-	(1.00000000000000000, 0.50591311045721465, 0.0031372549487095253, 0.9),
-	(0.99315647868549117, 0.98700499826786570, 0.1991541745031581200, 0.9),
-	(0.65845446095747107, 0.34122261685483596, 0.1707958535236471000, 0.9),
-	(0.95850826852461868, 0.50846600392285513, 0.7449288887136122900, 0.9)
-] * 10
+def group(self, **options):
 
-# [-Left|+Right, -Top|+Bottom]
-# Left/Top     -n, -n
-# Left/Bottom  -n, +n
-# Right/Bottom +n, +n
-# Right/Top    +n, -n
+	def option(name, default, **options):
 
-edge_vertex_locations = [
-	[[+1.00, +0.00], [+0.00, -1.00], [-1.00, +0.00], [+0.00, +1.00]],  # +1, +i, -1, -i Complex
-	[[-1.50, -1.50], [-1.50, +1.50], [+1.50, +1.50], [+1.50, -1.50]],  # +j, +k, -j, -k Quaternion
-	[[-2.00, -3.00], [-3.00, -2.00], [+2.00, +3.00], [+3.00, +2.00]],  # +m, +I, -m, -I Octonion
-	[[-3.00, +2.00], [-2.00, +3.00], [+3.00, -2.00], [+2.00, -3.00]],  # +J, +K, -J, -K Octonion
-	[[-2.00, -4.00], [-2.50, -3.50], [+2.00, +4.00], [+2.50, +3.50]],  # +n, +p, -m, -p Sedenion
-	[[-3.50, -2.50], [-4.00, -2.00], [+3.50, +2.50], [+4.00, +2.00]],  # +q, +r, -q, -r Sedenion
-	[[-4.00, +2.00], [-3.50, +2.50], [+4.00, -2.00], [+3.50, -2.50]],  # +M, +P, -M, -P Sedenion
-	[[-2.50, +3.50], [-2.00, +4.00], [+2.50, -3.50], [+2.00, -4.00]],  # +Q, +R, -Q, -R Sedenion
-]
+		if name in options:
 
-def group(self, **args):
+			return options[name]
 
-	if self.order > 4 | self.dimensions > 16:
+		return default
 
-		raise NotImplementedError
+	def identity():
 
-	HyperComplex = self.__class__
-	dimensions = self.dimensions
-	order = self.order
-
-	save = args["save"] if "save" in args else False
-	show = args["show"] if "show" in args else False
-	showall = args["showall"] if "showall" in args else False
-	translate = args["translate"] if "translate" in args else False
-	negatives = args["negatives"] if "negatives" in args else False
-	positives = args["positives"] if "positives" in args else False
-	directed = args["directed"] if "directed" in args else True
-	filename = args["filename"] if "filename" in args else "images/G{order}.{extension}"
-	extension = args["extension"] if "extension" in args else "png"
-	fontsize = args["fontsize"] if "fontsize" in args else 18
-	layers = args["layers"] if "layers" in args else ""
-	indices = args["indices"] if "indices" in args else "1ijkmIJKnpqrMPQR"
-	element = args["element"] if "element" in args else "e"
-	figsize = args["figsize"] if "figsize" in args else 6.0
-	dpi = args["dpi"] if "dpi" in args else 100
-
-	HyperComplex = self.__class__
-
-	def KD_identity():
-
-		sz  = len(self)
-		rg  = range(0, sz)
+		rg  = range(0, self.dimensions)
 		id  = [[+1 if i == j else 0 for j in rg] for i in rg]
 		id += [[-1 if i == j else 0 for j in rg] for i in rg]
 
-		for i in range(0, sz * 2):
+		for i in range(0, self.dimensions * 2):
 
-			id[i] = HyperComplex(tuple(id[i]))
+			id[i] = self.__class__(tuple(id[i]))
 
 		return id
 
-	def KD_edges(index):
+	def edges(index):
 
-		edges = numpy.zeros(groups.shape, dtype=int)
+		found = numpy.zeros(groups.shape, dtype=int)
 
 		for id in range(size):
 
-			edges[id, groups[id, index]] = 1
+			found[id, groups[id, index]] = 1
 
-		return edges
+		return found
 
-	def KD_groups(input):
+	def indexer(input):
 
 		if not input:
 
 			return 0
 
 		coefficients = input.coefficients()
-		enum = enumerate(coefficients)
+		id, val = next(((id, val) for id, val in enumerate(coefficients) if val))
+		id += input.dimensions if val < 0 else 0
 
-		index, value = next(((index, value) for index, value in enum if value))
+		return id
 
-		if value < 0:
+	if self == None or self.order > 5 or self.dimensions > 32:
 
-			index += len(input)
+		raise NotImplementedError
 
-		return index
+	element = option("element", "e", **options)
+	indices = option("indices", "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX", **options)
+	fontsize = option("fontsize", 14, **options)
+	figsize = option("figsize", 6.0, **options)
+	figdpi = option("figdpi", 100.0, **options)
+	directed = option("directed", True, **options)
+	showneg = option("negatives", False, **options)
+	showpos = option("positives", False, **options)
+	showall = option("showall", False, **options)
 
-	def KD_sorter(input):
-
-		test = input.tolist()
-		test = sorted(test)
-		work = [int(0)] * len(test)
-
-		for i in range(len(test)):
-
-			work[i] = test[i]
-
-		return sorted(work)
-
-	size = dimensions * 2
-	groups = numpy.zeros((size, size), dtype=int)
-	members = KD_identity()
-	layers = layers.split(",")
-	indices = list(indices)
+	size = self.dimensions * 2
 	connections = []
+	layered = []
+	indexes = []
+	groups = numpy.zeros((size, size), dtype=int)
+	indices = list(indices)
 
-	for a, b in itertools.product(members, repeat=2):
+	for a, b in itertools.product(identity(), repeat=2):
 
-		x = KD_groups(a)
-		y = KD_groups(b)
-		z = KD_groups(a * b)
+		groups[indexer(a), indexer(b)] = indexer(a * b)
 
-		groups[x, y] = z
+	if option("layers", False, **options):
 
-	for index in range(0, len(layers)):
+		layers = options["layers"].split(",")
+		layered = [0] * len(layers)
+		showall = True
 
-		temp = layers[index]
-		id = 0
+		for index in range(0, len(layers)):
 
-		if temp[:1] == "-" or temp[:1] == "+": # first handle sign
+			layer = layers[index]
+			id = 0
 
-			id += dimensions if temp[:1] == "-" else 0
-			temp = temp[1:]
+			if layer[:1] == "-" or layer[:1] == "+": # first handle sign
 
-		if element in temp: # handle e0,e12,e4, etc.
+				id += self.dimensions if layer[:1] == "-" else 0
+				layer = layer[1:]
 
-			x = temp.index(element)
-			id += int(temp[x+1:])
+			if element in layer: # handle e0,e12,e4, etc.
 
-		elif temp.isdigit(): # handle numbers
+				x = layer.index(element)
+				id += int(layer[x+1:])
 
-			id += int(temp)
+			elif layer.isdigit(): # handle numbers
 
-		elif temp.isalpha() and temp in indices: # handle i,j,k, etc
+				id += int(layer)
 
-			id += indices.index(temp)
+			elif layer.isalpha() and layer in indices: # handle i,j,k, etc
 
-		layers[index] = id
+				id += indices.index(layer)
 
-	if negatives and not positives:
+			layered[index] = id
 
-		ranged = range(dimensions, size)
+	elif showneg and not showpos and not showall:
 
-	elif positives and not negatives:
+		layered = range(self.dimensions, size)
 
-		ranged = range(0, dimensions)
+	elif showpos and not showneg and not showall:
+
+		layered = range(0, self.dimensions)
 
 	else:
 
-		ranged = range(0, size)
-
-	layered = layers if len(layers) > 0 and layers[0] > 0 else ranged
-	showall = True   if len(layers) > 0 and layers[0] > 0 else showall
+		layered = range(0, size)
 
 	for index in layered:
 
-		if index == 0 or index == dimensions: # inore the +1, -1 layers
+		if index == 0 or index == self.dimensions: # inore the +1, -1 layers
 
 			continue
 
-		connections.append(KD_edges(index))
-		g = networkx.from_numpy_matrix(sum(connections))
+		connections.append(edges(index))
+		total = networkx.from_numpy_matrix(sum(connections))
+		indexes.append(index)
 
-		if networkx.is_connected(g) and not (showall or positives or negatives):
+		if networkx.is_connected(total) and not (showall or showpos or showneg):
 
 			break
 
-	g_loop = networkx.from_numpy_matrix(connections[0])
-
-	loops = networkx.connected_components(g_loop)
+	first = networkx.from_numpy_matrix(connections[0])
+	loops = networkx.connected_components(first)
 	loops = [numpy.roll(x, -k) for k, x in enumerate(loops)]
+	graph = graph_tool.Graph(directed=directed)
+	text = graph.new_vertex_property("string")
+	pos = graph.new_vertex_property("vector<double>")
+	fill = graph.new_vertex_property("vector<double>")
+	color = graph.new_edge_property("vector<double>")
+	graph.add_vertex(size)
 
-	g = graph_tool.Graph(directed=directed)
-	g.add_vertex(size)
+	for index in range(size):
 
-	position = g.new_vertex_property("vector<double>")
-	label = g.new_vertex_property("string")
+		vertex = graph.vertex(index)
 
-	for id, loop in enumerate(loops):
-
-		loop = KD_sorter(loop)
-
-		for index, location in zip(loop, edge_vertex_locations[id]):
-
-			v = g.vertex(index)
-
-			label[v] = self.named(1, index=index, asstring=True, **args)
-			position[v] = location
-
-	edge_color = g.new_edge_property("vector<double>")
+		text[vertex] = self.named(1, index=index, asstring=True, **options)
+		fill[vertex] = definitions.graph_colors(self.dimensions, index)
+		pos[vertex] = definitions.graph_locations(self.dimensions, index)
 
 	for id, connection in enumerate(connections):
 
@@ -212,74 +156,81 @@ def group(self, **args):
 
 		for e1, e2 in edges:
 
-			edge = g.add_edge(e1, e2)
-			edge_color[edge] = edge_color_set[id]
+			edge = graph.add_edge(e1, e2)
 
-	options = {
-		"edge_color": edge_color,
-		"output_size": (figsize * dpi, figsize * dpi),
+			color[edge] = definitions.graph_colors(self.dimensions, indexes[id])
+
+	opts = {
+		"edge_color": color,
+		"edge_pen_width": 2,
+		"edge_marker_size": 20,
+		"edge_start_marker": "none",
+			# “none”, “arrow”, “circle”, “square”, “diamond”, “bar”
+		"edge_end_marker": "arrow",
+			# “none”, “arrow”, “circle”, “square”, “diamond”, “bar”
+		"output_size": (int(figsize * figdpi), int(figsize * figdpi)),
 		"vertex_font_size": fontsize,
-		"vertex_text": label,
+		"vertex_fill_color": fill,
+		"vertex_text": text,
+		"vertex_shape": "circle",
+			# “circle”, “triangle”, “square”, “pentagon”, “hexagon”,
+			# “heptagon”, “octagon” “double_circle”, “double_triangle”, “double_square”,
+			# “double_pentagon”, “double_hexagon”, “double_heptagon”, “double_octagon”,
+			# “pie”, “none”
+		"vertex_pen_width": 1,
 		"vertex_size": 30,
-		"pos": position,
+		"pos": pos,
 	}
 
-	if save:
+	if option("save", False, **options):
 
-		output = ((filename).format(order=order, extension=extension))
+		filename = option("filename", "G{order}.{filetype}", **options)
+		filetype = option("filetype", "png", **options)
 
-		graph_tool.draw.graph_draw(g, output=output, fmt=extension, **options)
+		output = ((filename).format(order=self.order, filetype=filetype))
 
-	if show:
+		graph_tool.draw.graph_draw(graph, output=output, fmt=filetype, **opts)
 
-		graph_tool.draw.graph_draw(g, **options)
+	if option("show", False, **options):
+
+		graph_tool.draw.graph_draw(graph, **opts)
 
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("-n", "--order", type=int, default=2)
-	parser.add_argument("-f", "--filename", type=str, default="images/G{order}.{extension}")
-	parser.add_argument("-e", "--extension", type=str, default="png")
-	parser.add_argument("-x", "--fontsize", type=int, default=18)
-	parser.add_argument("-s", "--figsize", type=float, default=6)
+	parser.add_argument("-e", "--element", type=str, default="e")
+	parser.add_argument("-i", "--indices", type=str, default="1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX")
+	parser.add_argument("-f", "--filename", type=str, default="G{order}.{filetype}")
+	parser.add_argument("-t", "--filetype", type=str, default="png")
+	parser.add_argument("-s", "--figsize", type=float, default=6.0)
+	parser.add_argument("-r", "--figdpi", type=float, default=100.0)
+	parser.add_argument("-x", "--fontsize", type=int, default=14)
 	parser.add_argument("-l", "--layers", type=str)
-	parser.add_argument("-r", "--dpi", type=float, default=100)
-	parser.add_argument("--indices", type=str, default="1ijkmIJKnpqrMPQR")
-	parser.add_argument("--element", type=str, default="e")
-	parser.add_argument("--directed", action="store_true")
+
+	parser.add_argument("--directed", action="store_false")
 	parser.add_argument("--translate", action="store_true")
 	parser.add_argument("--negatives", action="store_true")
 	parser.add_argument("--positives", action="store_true")
+	parser.add_argument("--showall", action="store_true")
 	parser.add_argument("--save", action="store_true")
 	parser.add_argument("--show", action="store_true")
 
 	args, urgs = parser.parse_known_args()
 
-	self = hypercomplex.R() if args.order == 0 else None
-	self = hypercomplex.C() if args.order == 1 else self
-	self = hypercomplex.Q() if args.order == 2 else self
-	self = hypercomplex.O() if args.order == 3 else self
-	self = hypercomplex.S() if args.order == 4 else self
-
-	if self == None:
-
-		raise NotImplementedError
-
-	options = {
-		"dpi": args.dpi,
-		"layers": args.layers,
-		"figsize": args.figsize,
-		"fontsize": args.fontsize,
-		"filename": args.filename,
-		"directed": args.directed,
-		"translate": args.translate,
-		"negatives": args.negatives,
-		"positives": args.positives,
-		"element": args.element,
-		"indices": args.indices,
-		"save": args.save,
-		"show": args.show,
+	types = {
+		0: hypercomplex.R(),
+		1: hypercomplex.C(),
+		2: hypercomplex.Q(),
+		3: hypercomplex.O(),
+		4: hypercomplex.S(),
+		5: hypercomplex.P(),
+		6: hypercomplex.X(),
+		7: hypercomplex.U(),
+		8: hypercomplex.V()
 	}
 
-	group(self, **options)
+	self = types.get(args.order, None)
+
+	group(self, **vars(args))
