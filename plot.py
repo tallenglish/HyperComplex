@@ -42,8 +42,8 @@ def plot(self, **options):
 	for (x, y), value in numpy.ndenumerate(matrix):
 
 		location = (y, size - x - 1)
-		index = value + size if diverge else abs(value) - 1
-		color = negatives[index] if showneg and not diverge and value < 0 else positives[index]
+		value = value + size if diverge else abs(value) - 1
+		color = negatives[value] if showneg and not diverge and value < 0 else positives[value]
 		patch = rectangle(location, 1, 1, edgecolor=color, facecolor=color, **extras)
 		axis.add_patch(patch)
 

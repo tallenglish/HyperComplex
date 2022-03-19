@@ -1,71 +1,74 @@
-# (r, g, b, opacity)
+# Colors (Fixed Color Graph Indices)
+# Returns (red, green, blue, opacity)
 
-def graph_colors(size, id):
+colors = [
+	"EEEEEE", # White   (1, n)
+	"FF0000", # Red     (i, s)
+	"00FF00", # Green   (j, t)
+	"0000FF", # Blue    (k, u)
+	"DDDDDD", # Gray    (L, N)
+	"00FFFF", # Cyan    (I, S)
+	"FF00FF", # Magenta (J, T)
+	"FFFF00", # Yellow  (K, U)
+	"CCCCCC", # Gray    (m, o)
+	"FF8000", # Orange  (p, v)
+	"FF0080", # Pink    (q, w)
+	"80FF00", # Lime    (r, x)
+	"BBBBBB", # Gray    (M, O)
+	"FF8000", # Teal    (P, V)
+	"8000FF", # Purple  (Q, W)
+	"0080FF", # Blue    (R, X)
+] * 2
 
-	color_set = [
-		[240, 240, 240, 1], # White   #808080
-		[255, 0, 0, 1],     # Red     #FF0000
-		[0, 255, 0, 1],     # Green   #00FF00
-		[0, 0, 255, 1],     # Blue    #0000FF
-		[235, 235, 235, 1], # Gray    #EBEBEB
-		[0, 255, 255, 1],   # Cyan    #00FFFF
-		[255, 0, 255, 1],   # Magenta #FF00FF
-		[255, 255, 0, 1],   # Yellow  #FFFF00
-		[202, 202, 202, 1], # Gray    #CACACA
-		[255, 128, 0, 1],   # Orange  #FF8000
-		[255, 0, 128, 1],   # Pink    #FF0080
-		[128, 255, 0, 1],   # Lime    #80FF00
-		[168, 168, 168, 1], # Gray    #A8A8A8
-		[0, 255, 128, 1],   # Teal    #FF8000
-		[128, 0, 255, 1],   # Purple  #8000FF
-		[0, 128, 255, 1],   # Blue    #0080FF
-	] * 2
+def color(order, id):
 
-	is_negative = True if id >= size else False
-
-	id -= size if is_negative else 0
-	cs = color_set[id]
+	negative = True if id >= 2**order else False
+	id -= 2**order if negative else 0
+	color = colors[id]
+	out = [0, 0, 0, 1]
 
 	for i in range(3):
 
-		cs[i] *= 0.75 / 255 if is_negative else 1 / 255
+		hex = color[i * 2 : i * 2 + 2]
+		out[i] = int(hex, 16) / 0xFF
 
-	return tuple(cs)
+		if negative:
 
-# [-Left|+Right, -Top|+Bottom]
-# Left/Top     -n, -n
-# Left/Bottom  -n, +n
-# Right/Bottom +n, +n
-# Right/Top    +n, -n
+			out[i] *= 0.50 # Color 50% Darker If Negative
 
-def graph_locations(size, id):
+	return tuple(out)
 
-	location_pos_set = [
-		[+1, +0], [+0, -1], [+2, +2], [+2, -2], # 1, i, j, k
-		[-2, -4], [-4, -2], [-4, +2], [-2, +4], # L, I, J, K
-		[-1, -5], [-4, -5], [-5, -4], [-5, -1], # m, p, q, r
-		[-5, +1], [-5, +4], [-4, +5], [-1, +5], # M, P, Q, R
-		[-4, -7], [-6, -7], [-7, -6], [-7, -4], # n, s, t, u
-		[-7, +4], [-7, +6], [-6, +7], [-4, +7], # N, S, T, U
-		[-7, +2], [-9, +1], [-9, -1], [-7, -2], # o, v, w, x
-		[+2, +7], [+1, +9], [-1, +9], [-2, +7], # O, V, W, X
-	]
+# Location (Fixed Location Graph Indices)
+# Returns [Horizontal, Vertical]
 
-	location_neg_set = [
-		[-1, +0], [+0, +1], [-2, -2], [-2, +2], # 1, i, j, k
-		[+2, +4], [+4, +2], [+4, -2], [+2, -4], # L, I, J, K
-		[+1, +5], [+4, +5], [+5, +4], [+5, +1], # m, p, q, r
-		[+5, -1], [+5, -4], [+4, -5], [+1, -5], # M, P, Q, R
-		[+4, +7], [+6, +7], [+7, +6], [+7, +4], # n, s, t, u
-		[+7, -4], [+7, -6], [+6, -7], [+4, -7], # N, S, T, U
-		[+7, -2], [+9, -1], [+9, +1], [+7, +2], # o, v, w, x
-		[-2, -7], [-1, -9], [+1, -9], [+2, -7], # O, V, W, X
-	]
+# Left / Top     := [-, -]
+# Left / Bottom  := [-, +]
+# Right / Bottom := [+, +]
+# Right / Top    := [+, -]
+# Center         := [0, 0]
 
-	if id >= size:
+locations = [
+	[1, 0], [0, -1],								# 1, i, Complex
+	[2, 2], [2, -2],								# j, k, Quaternion
+	[-1.5, -4], [-4, -1.5], [-4, 1.5], [-1.5, 4],	# L, I, J, K Octonion
+	[-2, -6], [-5, -6], [-6, -5], [-6, -2],			# m, p, q, r Sedenion
+	[-6, 2], [-6, 5], [-5, 6], [-2, 6],				# M, P, Q, R Sedenion
+	[-6, -9], [-8, -9], [-9, -8], [-9, -6],			# n, s, t, u Pathion
+	[-9, 6], [-9, 8], [-8, 9], [-6, +9],			# N, S, T, U Pathion
+	[-9, 4], [-11, 3], [-11, -3], [-9, -4],			# o, v, w, x Pathion
+	[4, 9], [3, 11], [-3, 11], [-4, 9],				# O, V, W, X Pathion
+]
 
-		id -= size
+def location(order, id):
 
-		return location_neg_set[id]
+	negative = True if id >= 2**order else False
+	id -= 2**order if negative else 0
+	location = locations[id]
 
-	return location_pos_set[id]
+	for i in range(2):
+
+		if negative:
+
+			location[i] *= -1 # Reversed Location If Negative
+
+	return location

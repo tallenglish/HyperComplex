@@ -65,11 +65,11 @@ def group(self, **options):
 	showall = option("showall", False, **options)
 
 	size = self.dimensions * 2
+	groups = numpy.zeros((size, size), dtype=int)
+	indices = list(indices)
 	connections = []
 	layered = []
 	indexes = []
-	groups = numpy.zeros((size, size), dtype=int)
-	indices = list(indices)
 
 	for a, b in itertools.product(identity(), repeat=2):
 
@@ -142,23 +142,25 @@ def group(self, **options):
 	color = graph.new_edge_property("vector<double>")
 	graph.add_vertex(size)
 
-	for index in range(size):
+	# Position Indices Consistantly
 
-		vertex = graph.vertex(index)
+	for id in range(size):
 
-		text[vertex] = self.named(1, index=index, asstring=True, **options)
-		fill[vertex] = definitions.graph_colors(self.dimensions, index)
-		pos[vertex] = definitions.graph_locations(self.dimensions, index)
+		vertex = graph.vertex(id)
+
+		text[vertex] = self.named(1, index=id, asstring=True, **options)
+		fill[vertex] = definitions.color(self.order, id)
+		pos[vertex] = definitions.location(self.order, id)
+
+	# Add Rotations
 
 	for id, connection in enumerate(connections):
 
-		edges = zip(*numpy.where(connection))
-
-		for e1, e2 in edges:
+		for e1, e2 in zip(*numpy.where(connection)):
 
 			edge = graph.add_edge(e1, e2)
 
-			color[edge] = definitions.graph_colors(self.dimensions, indexes[id])
+			color[edge] = definitions.color(self.order, indexes[id])
 
 	opts = {
 		"edge_color": color,
