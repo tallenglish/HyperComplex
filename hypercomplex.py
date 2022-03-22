@@ -704,3 +704,15 @@ Pathion    = P     = cayley_dickson_construction(S)
 Chingon    = X     = cayley_dickson_construction(P)
 Routon     = U     = cayley_dickson_construction(X)
 Voudon     = V     = cayley_dickson_construction(U)
+
+Order = {
+	0: R(),
+	1: C(),
+	2: Q(),
+	3: O(),
+	4: S(),
+	5: P(),
+	6: X(),
+	7: U(),
+	8: V()
+}

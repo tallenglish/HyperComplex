@@ -1,5 +1,4 @@
 import argparse
-import hypercomplex
 import matplotlib
 import seaborn
 import pylab
@@ -17,16 +16,23 @@ def plot(self, **options):
 
 		return default
 
-	if self == None or self.order > 8 or self.dimensions > 256:
-
-		raise NotImplementedError
-
 	showneg = option("negatives", False, **options)
 	poscmap = option("colormap", "RdBu_r", **options)
 	negcmap = option("ncolormap", "PiYG_r", **options)
 	diverge = option("diverging", False, **options)
 	figsize = option("figsize", 6.0, **options)
 	figdpis = option("figdpi", 100.0, **options)
+	order = option("order", None, **options)
+
+	if self == None:
+
+		from hypercomplex import Order
+
+		self = Order.get(order, None)
+
+	if self == None or (hasattr(self, "order") and self.order > 8):
+
+		raise NotImplementedError
 
 	seaborn.set_style("white")
 
@@ -86,18 +92,4 @@ if __name__ == "__main__":
 
 	args, urgs = parser.parse_known_args()
 
-	types = {
-		0: hypercomplex.R(),
-		1: hypercomplex.C(),
-		2: hypercomplex.Q(),
-		3: hypercomplex.O(),
-		4: hypercomplex.S(),
-		5: hypercomplex.P(),
-		6: hypercomplex.X(),
-		7: hypercomplex.U(),
-		8: hypercomplex.V()
-	}
-
-	self = types.get(args.order, None)
-
-	plot(self, **vars(args))
+	plot(None, **vars(args))

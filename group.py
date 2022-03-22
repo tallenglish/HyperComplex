@@ -1,5 +1,4 @@
 import argparse
-import hypercomplex
 import definitions
 import graph_tool.all
 import itertools
@@ -50,19 +49,26 @@ def group(self, **options):
 
 		return id
 
-	if self == None or self.order > 5 or self.dimensions > 32:
-
-		raise NotImplementedError
-
 	element = option("element", "e", **options)
 	indices = option("indices", "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX", **options)
 	fontsize = option("fontsize", 14, **options)
 	figsize = option("figsize", 6.0, **options)
 	figdpi = option("figdpi", 100.0, **options)
-	directed = option("directed", True, **options)
+	undirected = option("undirected", False, **options)
 	showneg = option("negatives", False, **options)
 	showpos = option("positives", False, **options)
 	showall = option("showall", False, **options)
+	order = option("order", None, **options)
+
+	if self == None:
+
+		from hypercomplex import Order
+
+		self = Order.get(order, None)
+
+	if self == None or (hasattr(self, "order") and self.order > 5):
+
+		raise NotImplementedError
 
 	size = self.dimensions * 2
 	groups = numpy.zeros((size, size), dtype=int)
@@ -116,6 +122,10 @@ def group(self, **options):
 
 	else:
 
+		if showneg and showpos:
+
+			showall = True
+
 		layered = range(0, size)
 
 	for index in layered:
@@ -135,7 +145,7 @@ def group(self, **options):
 	first = networkx.from_numpy_matrix(connections[0])
 	loops = networkx.connected_components(first)
 	loops = [numpy.roll(x, -k) for k, x in enumerate(loops)]
-	graph = graph_tool.Graph(directed=directed)
+	graph = graph_tool.Graph(directed=(not undirected))
 	text = graph.new_vertex_property("string")
 	pos = graph.new_vertex_property("vector<double>")
 	fill = graph.new_vertex_property("vector<double>")
@@ -211,7 +221,7 @@ if __name__ == "__main__":
 	parser.add_argument("-x", "--fontsize", type=int, default=14)
 	parser.add_argument("-l", "--layers", type=str)
 
-	parser.add_argument("--directed", action="store_false")
+	parser.add_argument("--undirected", action="store_true")
 	parser.add_argument("--translate", action="store_true")
 	parser.add_argument("--negatives", action="store_true")
 	parser.add_argument("--positives", action="store_true")
@@ -221,18 +231,4 @@ if __name__ == "__main__":
 
 	args, urgs = parser.parse_known_args()
 
-	types = {
-		0: hypercomplex.R(),
-		1: hypercomplex.C(),
-		2: hypercomplex.Q(),
-		3: hypercomplex.O(),
-		4: hypercomplex.S(),
-		5: hypercomplex.P(),
-		6: hypercomplex.X(),
-		7: hypercomplex.U(),
-		8: hypercomplex.V()
-	}
-
-	self = types.get(args.order, None)
-
-	group(self, **vars(args))
+	group(None, **vars(args))
