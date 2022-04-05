@@ -260,7 +260,7 @@ A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that
 
 The significance of the imaginary unit:
 
-- i * i = -1
+- i² = -1
 
 ```python
 # NOTE: Takes less than 2s
@@ -286,11 +286,11 @@ X.plot(diverging=True, show=True, save=True, filename="images/complex_d.png")
 
 The significance of the higher order imaginary units:
 
-- i = j * k
-- j = k * i
-- k = i * j
-- i * i = j * j = k * k = -1
-- i * j * k = -1
+- i = jk
+- j = ki
+- k = ij
+- i² = j² = k² = -1
+- ijk = -1
 
 ```python
 # NOTE: Takes less than 2s
@@ -317,8 +317,8 @@ X.plot(diverging=True, show=True, save=True, filename="images/quaternion_d.png")
 The significance of the higher order imaginary units:
 
 - [L, I, J, K] = [1, i, j, k] * L
-- I * I = J * J = K * K = L * L = -1
-- I * J * K = L
+- L² = I² = J² = K² = -1
+- IJK = L
 
 ```python
 # NOTE: Takes about 3s
@@ -346,12 +346,12 @@ X.plot(diverging=True, show=True, save=True, filename="images/octonion_d.png")
 
 The significance of the higher order imaginary units:
 
-- [n, p, q, r] = [1, i, j, k] * n
-- [M, P, Q, R] = [m, I, J, K] * n
-- n * n = p * p = q * q = r * r = -1
-- M * M = P * P = Q * Q = R * R = -1
-- p * q * r = n
-- P * Q * R = M
+- [m, p, q, r] = [1, i, j, k] * m
+- [M, P, Q, R] = [L, I, J, K] * m
+- m² = p² = q² = r² = -1
+- M² = P² = Q² = R² = -1
+- pqr = m
+- PQR = M
 
 Now things are getting very complicated (pun intended), we will only show the positive layers, for each of the four main rotational groups, `L,i,j,k`, `L,I,J,K` as for Octonions and their duals `m,p,q,r` and `M,P,Q,R`.  Even as they are, it is still hard to visualise, but displaying fewer layers per image will rectify that, you need to display a minimum of one layer - so you could just display singular rotational groups for maximum readability.
 
@@ -384,9 +384,9 @@ The significance of the higher order imaginary units:
 - [n, s, t, u] = [1, i, j, k] * n
 - [N, S, T, U] = [L, I, J, K] * n
 - [o, v, w, x] = [m, p, q, r] * n
-- [N, V, W, X] = [m, P, Q, R] * n
-- n * n = s * s = t * t = u * u = o * o = v * v = w * w = x * x = -1
-- N * N = S * S = T * T = U * U = O * O = V * V = W * W = X * X = -1
+- [O, V, W, X] = [M, P, Q, R] * n
+- n² = s² = t² = u² = o² = v² = w² = x² = -1
+- N² = S² = T² = U² = O² = V² = W² = X² = -1
 - stu = n
 - STU = N
 - vwx = o
