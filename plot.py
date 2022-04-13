@@ -1,12 +1,14 @@
-import argparse
-import matplotlib
-import seaborn
-import pylab
-import numpy
+from hypercomplex import Order, Names
+
+import argparse as ap
+import matplotlib as mpl
+import seaborn as sea
+import pylab as pyl
+import numpy as np
 
 # Color Maps: https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-def plot(self, **options):
+def plot(**options):
 
 	def option(name, default, **options):
 
@@ -22,30 +24,41 @@ def plot(self, **options):
 	diverge = option("diverging", False, **options)
 	figsize = option("figsize", 6.0, **options)
 	figdpis = option("figdpi", 100.0, **options)
+	filename = option("filename", "P{order}.{filetype}", **options)
+	filetype = option("filetype", "png", **options)
 	order = option("order", None, **options)
+	named = option("named", None, **options)
+	save = option("save", False, **options)
+	show = option("show", False, **options)
 
-	if self == None:
+	if named != None:
 
-		from hypercomplex import Order
+		self = Names.get(named, None)
+
+	elif order != None:
 
 		self = Order.get(order, None)
 
-	if self == None or (hasattr(self, "order") and self.order > 8):
+	else:
+
+		self = None
+
+	if self == None or (hasattr(self, "order") and self.order > 5):
 
 		raise NotImplementedError
 
-	seaborn.set_style("white")
+	sea.set_style("white")
 
 	size = self.dimensions
 	matrix = self.matrix(asindex=True)
-	figure, axis = pylab.subplots(figsize=(figsize, figsize), dpi=figdpis)
+	figure, axis = pyl.subplots(figsize=(figsize, figsize), dpi=figdpis)
 	numcolors = 2 * size + 1 if diverge else size
-	positives = seaborn.color_palette(poscmap, numcolors)
-	negatives = seaborn.color_palette(negcmap, numcolors)
-	rectangle = matplotlib.patches.Rectangle
+	positives = sea.color_palette(poscmap, numcolors)
+	negatives = sea.color_palette(negcmap, numcolors)
+	rectangle = mpl.patches.Rectangle
 	extras = {"snap":False,"lw":1,"zorder":1}
 
-	for (x, y), value in numpy.ndenumerate(matrix):
+	for (x, y), value in np.ndenumerate(matrix):
 
 		location = (y, size - x - 1)
 		value = value + size if diverge else abs(value) - 1
@@ -58,32 +71,30 @@ def plot(self, **options):
 	axis.set_xlim(0, size)
 	axis.set_ylim(0, size)
 
-	pylab.tight_layout()
+	pyl.tight_layout()
 
-	if option("save", False, **options):
-
-		filename = option("filename", "P{order}.{filetype}", **options)
-		filetype = option("filetype", "png", **options)
+	if save:
 
 		output = ((filename).format(order=self.order, filetype=filetype))
 
-		pylab.savefig(output)
+		pyl.savefig(output)
 
-	if option("show", False, **options):
+	if show:
 
-		pylab.show()
+		pyl.show()
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser()
+	parser = ap.ArgumentParser()
 
-	parser.add_argument("-n", "--order", type=int, default=2)
+	parser.add_argument("-o", "--order", type=int, default=2)
 	parser.add_argument("-f", "--filename", type=str, default="P{order}.{filetype}")
 	parser.add_argument("-t", "--filetype", type=str, default="png")
 	parser.add_argument("-s", "--figsize", type=float, default=6.0)
 	parser.add_argument("-r", "--figdpi", type=int, default=100)
 	parser.add_argument("-c", "--colormap", type=str, default="RdBu_r")
 	parser.add_argument("-x", "--ncolormap", type=str, default="PiYG_r")
+	parser.add_argument("-n", "--named", type=str)
 
 	parser.add_argument("--negatives", action="store_true")
 	parser.add_argument("--diverging", action="store_true")
@@ -92,4 +103,4 @@ if __name__ == "__main__":
 
 	args, urgs = parser.parse_known_args()
 
-	plot(None, **vars(args))
+	plot(**vars(args))

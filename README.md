@@ -22,23 +22,25 @@ This library has been taylored to use ***`Jupiter / Visual Studio Code Notebooks
 
 ### **`Requirements`**
 
-The following packages are required, specifially for the graphical functionality, if you remove the HyperComplex.group() and HyperComplex.plot() methods, you no longer need these requirements and the package can work standalone:
+The following packages are required, mostly for the graphical functionality, if you remove the group() and plot() methods, you no longer need these requirements and the package can work standalone:
 
-- itertools
-- functools
-- argparse
-- matplotlib
-- graph_tool
-- seaborn
-- networkx
-- numbers
-- numpy
-- pylab
+- functools (HyperComplex)
+- numbers (HyperComplex)
+- numpy (HyperComplex, Group, Plot)
+- argparse (Group, Plot)
+- itertools (Group)
+- graph_tool (Group)
+- networkx (Group)
+- matplotlib (Plot)
+- seaborn (Plot)
+- pylab (Plot)
 
-### **`Import HyperComplex Library`**
+### **`Import Librarys`**
 
 ```python
 from hypercomplex import *
+from group import *
+from plot import *
 ```
 
 ### **`Basic Usage`**
@@ -212,14 +214,16 @@ Index ID:
  4  3 -2 -1
 ```
 
-### **`HyperComplex Graphical Methods`**
+### **`HyperComplex Plots`**
 
-The `HyperComplex.plot()` method, which produces  images so we can visualize the multiplication tables with either one or two colormaps.  Using the default options and diverging colurmap, `red` displays positive values, `blue`  negative values. For example, with the complex numbers 1 => least red, i => most red, -1 => least blue, -i => most blue.
+The `plot()` method, which produces images so we can visualize the multiplication tables with either one or two colormaps.  Using the default options and diverging colurmap, `red` displays positive values, `blue` negative values. For example, with the complex numbers 1 => least red, i => most red, -1 => least blue, -i => most blue.
 
 For a full list of supported colormaps supported by , please visit [Matplotlib Colormaps](https://matplotlib.org/stable/tutorials/colors/colormaps.html)
 
 Options:
 
+- `named=None` : name of the hyper complex object to use.
+- `order=None` : order of the hyper complex object to use.
 - `filename="P{order}.{filetype}"` : images filename E.g. P3.png
 - `filetype="png"` : the file extension used above.
 - `figsize=6.0` : figure size in inches.
@@ -231,12 +235,16 @@ Options:
 - `show=False` : show figure to screen.
 - `save=False` : save figure to disk.
 
-For the smaller algebras (up to Sedenion), we can construct the [Cayley Graph](http://en.wikipedia.org/wiki/Cayley_graph) using `HyperComplex.graph()` to display the various rotations of various imaginary indices as shown below for quaternions.
+### **`HyperComplex Cayley Graphs`**
+
+For the smaller algebras (up to Pathion), we can construct the [Cayley Graph](http://en.wikipedia.org/wiki/Cayley_graph) using `group()` to display the various rotations of various imaginary indices as shown below for quaternions.
 
 When displaying edges, the color of the edge will be the same as the vertex points they relate to, E.g. `i` will always be `red`, `j` will be `green` and so on.  Negative rotations will be displayed in a darker variant of the color to stand out.
 
 Options:
 
+- `named=None` : name of the hyper complex object to use.
+- `order=None` : order of the hyper complex object to use.
 - `filename="G{order}.{filetype}"` : images filename E.g. G3.png.
 - `filetype="png"` : the file extension used above.
 - `figsize=6.0` : figure size in inches.
@@ -265,13 +273,12 @@ The significance of the imaginary unit:
 ```python
 # NOTE: Takes less than 2s
 
-X = Complex()
+group(order=1, translate=True, show=True, showall=True)
+group(order=1, translate=True, show=True, positives=True)
+group(order=1, translate=True, show=True, negatives=True)
 
-X.group(translate=True, show=True, save=True, filename="images/complex_g_all.png", showall=True)
-X.group(translate=True, show=True, save=True, filename="images/complex_g_pos.png", positives=True)
-X.group(translate=True, show=True, save=True, filename="images/complex_g_neg.png", negatives=True)
-X.plot(diverging=False, show=True, save=True, filename="images/complex.png")
-X.plot(diverging=True, show=True, save=True, filename="images/complex_d.png")
+plot(order=1, diverging=False, show=True)
+plot(order=1, diverging=True, show=True)
 ```
 
 ![Complex](images/complex_g_all.png "Complex")
@@ -295,13 +302,12 @@ The significance of the higher order imaginary units:
 ```python
 # NOTE: Takes less than 2s
 
-X = Quaternion()
+group(order=2, translate=True, show=True, showall=True)
+group(order=2, translate=True, show=True, positives=True)
+group(order=2, translate=True, show=True, negatives=True)
 
-X.group(translate=True, show=True, save=True, filename="images/quaternion_g_all.png", showall=True)
-X.group(translate=True, show=True, save=True, filename="images/quaternion_g_pos.png", positives=True)
-X.group(translate=True, show=True, save=True, filename="images/quaternion_g_neg.png", negatives=True)
-X.plot(diverging=False, show=True, save=True, filename="images/quaternion.png")
-X.plot(diverging=True, show=True, save=True, filename="images/quaternion_d.png")
+plot(order=2, diverging=False, show=True)
+plot(order=2, diverging=True, show=True)
 ```
 
 ![Quaternions](images/quaternion_g_all.png "Quaternions")
@@ -323,14 +329,13 @@ The significance of the higher order imaginary units:
 ```python
 # NOTE: Takes about 3s
 
-X = Octonion()
+group(order=3, translate=True, show=True, layers="L,i,j,k")
+group(order=3, translate=True, show=True, layers="-L,-i,-j,-k")
+group(order=3, translate=True, show=True, layers="L,I,J,K")
+group(order=3, translate=True, show=True, layers="-L,-I,-J,-K")
 
-X.group(translate=True, show=True, layers="L,i,j,k", save=True, filename="images/octonion_g_Lijk_pos.png")
-X.group(translate=True, show=True, layers="-L,-i,-j,-k", save=True, filename="images/octonion_g_Lijk_neg.png")
-X.group(translate=True, show=True, layers="L,I,J,K", save=True, filename="images/octonion_g_LIJK_pos.png")
-X.group(translate=True, show=True, layers="-L,-I,-J,-K", save=True, filename="images/octonion_g_LIJK_neg.png")
-X.plot(diverging=False, show=True, save=True, filename="images/octonion.png")
-X.plot(diverging=True, show=True, save=True, filename="images/octonion_d.png")
+plot(order=3, diverging=False, show=True)
+plot(order=3, diverging=True, show=True)
 ```
 
 ![Octonion](images/octonion_g_Lijk_pos.png "Octonion")
@@ -358,14 +363,13 @@ Now things are getting very complicated (pun intended), we will only show the po
 ```python
 # NOTE: Takes less than 8s
 
-X = Sedenion()
+group(order=4, translate=True, show=True, layers="L,i,j,k")
+group(order=4, translate=True, show=True, layers="L,I,J,K")
+group(order=4, translate=True, show=True, layers="m,p,q,r")
+group(order=4, translate=True, show=True, layers="M,P,Q,R")
 
-X.group(translate=True, show=True, layers="L,i,j,k", save=True, filename="images/sedenion_g_Lijk_pos.png")
-X.group(translate=True, show=True, layers="L,I,J,K", save=True, filename="images/sedenion_g_LIJK_pos.png")
-X.group(translate=True, show=True, layers="m,p,q,r", save=True, filename="images/sedenion_g_mpqr_pos.png")
-X.group(translate=True, show=True, layers="M,P,Q,R", save=True, filename="images/sedenion_g_MPQR_pos.png")
-X.plot(diverging=False, show=True, save=True, filename="images/sedenion.png")
-X.plot(diverging=True, show=True, save=True, filename="images/sedenion_d.png")
+plot(order=4, diverging=False, show=True)
+plot(order=4, diverging=True, show=True)
 ```
 
 ![Sedenion](images/sedenion_g_Lijk_pos.png "Sedenion")
@@ -397,14 +401,13 @@ As before we will only show the positive layers, for each of the four main rotat
 ```python
 # NOTE: Takes about 42s
 
-X = Pathion()
+group(order=5, translate=True, show=True, layers="L")
+group(order=5, translate=True, show=True, layers="m")
+group(order=5, translate=True, show=True, layers="n")
+group(order=5, translate=True, show=True, layers="o")
 
-X.group(translate=True, show=True, layers="L", save=True, filename="images/pathion_g_L_pos.png")
-X.group(translate=True, show=True, layers="m", save=True, filename="images/pathion_g_m_pos.png")
-X.group(translate=True, show=True, layers="n", save=True, filename="images/pathion_g_n_pos.png")
-X.group(translate=True, show=True, layers="o", save=True, filename="images/pathion_g_o_pos.png")
-X.plot(diverging=False, show=True, save=True, filename="images/pathion.png")
-X.plot(diverging=True, show=True, save=True, filename="images/pathion_d.png")
+plot(order=5, diverging=False, show=True)
+plot(order=5, diverging=True, show=True)
 ```
 
 ![Pathion](images/pathion_g_L_pos.png "Pathion")
@@ -418,15 +421,13 @@ X.plot(diverging=True, show=True, save=True, filename="images/pathion_d.png")
 
 Chingons form a 64-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the pathion.
 
-HyperComplex.group() is disabled, as it is far too busy/messy.
+group() is disabled, as it is far too busy/messy.
 
 ```python
 # NOTE: Takes about 1m
 
-X = Chingon()
-
-X.plot(diverging=False, show=True, save=True, filename="images/chingon.png")
-X.plot(diverging=True, show=True, save=True, filename="images/chingon_d.png")
+plot(order=6, diverging=False, show=True)
+plot(order=6, diverging=True, show=True)
 ```
 
 ![Chingon](images/chingon.png "Chingon")
@@ -436,15 +437,13 @@ X.plot(diverging=True, show=True, save=True, filename="images/chingon_d.png")
 
 Routons form a 128-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the chingons.
 
-HyperComplex.group() is disabled, as it is far too busy/messy.
+group() is disabled, as it is far too busy/messy.
 
 ```python
 # NOTE: Takes about 10m40s
 
-X = Routon()
-
-X.plot(diverging=False, show=True, save=True, filename="images/routon.png")
-X.plot(diverging=True, show=True, save=True, filename="images/routon_d.png")
+plot(order=7, diverging=False, show=True)
+plot(order=7, diverging=True, show=True)
 ```
 
 ![Routon](images/routon.png "Routon")
@@ -454,15 +453,13 @@ X.plot(diverging=True, show=True, save=True, filename="images/routon_d.png")
 
 Voudons form a 256-dimensional algebra over the reals obtained by applying the Cayley–Dickson construction to the routons.
 
-HyperComplex.group() is disabled, as it is far too busy/messy.
+group() is disabled, as it is far too busy/messy.
 
 ```python
 # NOTE: Takes very long time
 
-X = Voudon()
-
-X.plot(diverging=False, show=True, save=True, filename="images/voudon.png")
-X.plot(diverging=True, show=True, save=True, filename="images/voudon_d.png")
+plot(order=8, diverging=False, show=True)
+plot(order=8, diverging=True, show=True)
 ```
 
 ![Voudon](images/voudon_d.png "Voudon")

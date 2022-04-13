@@ -1,11 +1,14 @@
-import argparse
-import definitions
-import graph_tool.all
-import itertools
-import networkx
-import numpy
+from hypercomplex import Order, Names
 
-def group(self, **options):
+import argparse as ap
+import definitions as df
+import graph_tool as gt
+import graph_tool.draw as gtd
+import itertools as it
+import networkx as nx
+import numpy as np
+
+def group(**options):
 
 	def option(name, default, **options):
 
@@ -29,7 +32,7 @@ def group(self, **options):
 
 	def edges(index):
 
-		found = numpy.zeros(groups.shape, dtype=int)
+		found = np.zeros(groups.shape, dtype=int)
 
 		for id in range(size):
 
@@ -54,36 +57,48 @@ def group(self, **options):
 	fontsize = option("fontsize", 14, **options)
 	figsize = option("figsize", 6.0, **options)
 	figdpi = option("figdpi", 100.0, **options)
-	undirected = option("undirected", False, **options)
+	filename = option("filename", "G{order}.{filetype}", **options)
+	filetype = option("filetype", "png", **options)
+	directed = option("directed", False, **options)
 	showneg = option("negatives", False, **options)
 	showpos = option("positives", False, **options)
 	showall = option("showall", False, **options)
+	layers = option("layers", False, **options)
 	order = option("order", None, **options)
+	named = option("named", None, **options)
+	save = option("save", False, **options)
+	show = option("show", False, **options)
 
-	if self == None:
+	if named != None:
 
-		from hypercomplex import Order
+		self = Names.get(named, None)
+
+	elif order != None:
 
 		self = Order.get(order, None)
+
+	else:
+
+		self = None
 
 	if self == None or (hasattr(self, "order") and self.order > 5):
 
 		raise NotImplementedError
 
 	size = self.dimensions * 2
-	groups = numpy.zeros((size, size), dtype=int)
+	groups = np.zeros((size, size), dtype=int)
 	indices = list(indices)
 	connections = []
 	layered = []
 	indexes = []
 
-	for a, b in itertools.product(identity(), repeat=2):
+	for a, b in it.product(identity(), repeat=2):
 
 		groups[indexer(a), indexer(b)] = indexer(a * b)
 
-	if option("layers", False, **options):
+	if layers:
 
-		layers = options["layers"].split(",")
+		layers = layers.split(",")
 		layered = [0] * len(layers)
 		showall = True
 
@@ -135,21 +150,22 @@ def group(self, **options):
 			continue
 
 		connections.append(edges(index))
-		total = networkx.from_numpy_matrix(sum(connections))
+		total = nx.from_numpy_matrix(sum(connections))
 		indexes.append(index)
 
-		if networkx.is_connected(total) and not (showall or showpos or showneg):
+		if nx.is_connected(total) and not (showall or showpos or showneg):
 
 			break
 
-	first = networkx.from_numpy_matrix(connections[0])
-	loops = networkx.connected_components(first)
-	loops = [numpy.roll(x, -k) for k, x in enumerate(loops)]
-	graph = graph_tool.Graph(directed=(not undirected))
+	first = nx.from_numpy_matrix(connections[0])
+	loops = nx.connected_components(first)
+	loops = [np.roll(x, -k) for k, x in enumerate(loops)]
+	graph = gt.Graph(directed=directed)
 	text = graph.new_vertex_property("string")
 	pos = graph.new_vertex_property("vector<double>")
 	fill = graph.new_vertex_property("vector<double>")
 	color = graph.new_edge_property("vector<double>")
+
 	graph.add_vertex(size)
 
 	# Position Indices Consistantly
@@ -159,18 +175,18 @@ def group(self, **options):
 		vertex = graph.vertex(id)
 
 		text[vertex] = self.named(1, index=id, asstring=True, **options)
-		fill[vertex] = definitions.color(self.order, id)
-		pos[vertex] = definitions.location(self.order, id)
+		fill[vertex] = df.color(self.order, id)
+		pos[vertex] = df.location(self.order, id)
 
 	# Add Rotations
 
 	for id, connection in enumerate(connections):
 
-		for e1, e2 in zip(*numpy.where(connection)):
+		for e1, e2 in zip(*np.where(connection)):
 
 			edge = graph.add_edge(e1, e2)
 
-			color[edge] = definitions.color(self.order, indexes[id])
+			color[edge] = df.color(self.order, indexes[id])
 
 	opts = {
 		"edge_color": color,
@@ -194,24 +210,21 @@ def group(self, **options):
 		"pos": pos,
 	}
 
-	if option("save", False, **options):
-
-		filename = option("filename", "G{order}.{filetype}", **options)
-		filetype = option("filetype", "png", **options)
+	if save:
 
 		output = ((filename).format(order=self.order, filetype=filetype))
 
-		graph_tool.draw.graph_draw(graph, output=output, fmt=filetype, **opts)
+		gtd.graph_draw(graph, output=output, fmt=filetype, **opts)
 
-	if option("show", False, **options):
+	if show:
 
-		graph_tool.draw.graph_draw(graph, **opts)
+		gtd.graph_draw(graph, **opts)
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser()
+	parser = ap.ArgumentParser()
 
-	parser.add_argument("-n", "--order", type=int, default=2)
+	parser.add_argument("-o", "--order", type=int, default=2)
 	parser.add_argument("-e", "--element", type=str, default="e")
 	parser.add_argument("-i", "--indices", type=str, default="1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX")
 	parser.add_argument("-f", "--filename", type=str, default="G{order}.{filetype}")
@@ -220,8 +233,9 @@ if __name__ == "__main__":
 	parser.add_argument("-r", "--figdpi", type=float, default=100.0)
 	parser.add_argument("-x", "--fontsize", type=int, default=14)
 	parser.add_argument("-l", "--layers", type=str)
+	parser.add_argument("-n", "--named", type=str)
 
-	parser.add_argument("--undirected", action="store_true")
+	parser.add_argument("--directed", action="store_true")
 	parser.add_argument("--translate", action="store_true")
 	parser.add_argument("--negatives", action="store_true")
 	parser.add_argument("--positives", action="store_true")
@@ -231,4 +245,4 @@ if __name__ == "__main__":
 
 	args, urgs = parser.parse_known_args()
 
-	group(None, **vars(args))
+	group(**vars(args))

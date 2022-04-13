@@ -1,10 +1,8 @@
 from functools import lru_cache
 from dunders import dunders, math_all
 from numbers import Number
-from group import group
-from plot import plot
 
-import numpy
+import numpy as np
 
 class BaseNumber(Number):
 
@@ -22,7 +20,7 @@ class BaseNumber(Number):
 
 	def norm(self):
 
-		return numpy.sqrt(self.square())
+		return np.sqrt(self.square())
 
 	def __abs__(self):
 
@@ -378,7 +376,7 @@ def cayley_dickson_construction(parent):
 
 				size = len(result)
 
-				for i, j in numpy.ndindex(size, size):
+				for i, j in np.ndindex(size, size):
 
 					temp = result[i][j]
 					temp = temp.astuple() if astuple else temp
@@ -444,7 +442,7 @@ def cayley_dickson_construction(parent):
 
 				size = len(result)
 
-				for i, j in numpy.ndindex(size, size):
+				for i, j in np.ndindex(size, size):
 
 					temp = result[i][j]
 					temp = temp.astuple() if astuple else temp
@@ -484,18 +482,6 @@ def cayley_dickson_construction(parent):
 				result += (value[:1] == "-" and [" - " + value[1:]] or [" + " + value])[0]
 
 			return result
-
-		# HyperComplex Graphical Operations
-		# HyperComplex.group() creates rotational diagram
-		# HyperCompex.plot() creates Cayley Diagram
-
-		def group(self, **args):
-
-			group(self, **args)
-
-		def plot(self, **args):
-
-			plot(self, **args)
 
 		# HyperComplex Comparison
 
@@ -706,13 +692,25 @@ Routon     = U     = cayley_dickson_construction(X)
 Voudon     = V     = cayley_dickson_construction(U)
 
 Order = {
-	0: R(),
-	1: C(),
-	2: Q(),
-	3: O(),
-	4: S(),
-	5: P(),
-	6: X(),
-	7: U(),
-	8: V()
+	0: Real(),
+	1: Complex(),
+	2: Quaternion(),
+	3: Octonion(),
+	4: Sedenion(),
+	5: Pathion(),
+	6: Chingon(),
+	7: Routon(),
+	8: Voudon()
+}
+
+Names = {
+	"Real": Real(),
+	"Complex": Complex(),
+	"Quaternion": Quaternion(),
+	"Octonion": Octonion(),
+	"Sedenion": Sedenion(),
+	"Pathion": Pathion(),
+	"Chingon": Chingon(),
+	"Routon": Routon(),
+	"Voudon": Voudon()
 }
