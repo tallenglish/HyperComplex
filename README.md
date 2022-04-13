@@ -234,8 +234,8 @@ Options:
 - `filetype="png"` : the file extension used above.
 - `figsize=6.0` : figure size in inches.
 - `figdpi=100.0` : figure dpi (pixels per inch).
-- `colormap="RdBu_r"` : the matpltlib colormap to use for positives and diverging graphs.
-- `ncolormap="PiYG_r"` : the matplotlib colormap to use for negatives.
+- `colormap="RdBu_r"` : default matplotlib colormap to use.
+- `ncolormap="PiYG_r"` : matplotlib colormap to use for negatives.
 - `diverging=False` : use diverging colormap.
 - `negatives=False` : show negative values using ncolormap above (ignored if diverging used).
 - `show=False` : show figure to screen.
