@@ -20,6 +20,12 @@ This package is a combination of the work done by [discretegames](https://github
 
 This library has been taylored to use ***`Jupiter / Visual Studio Code Notebooks`*** as well as work with command line for the graphical portions.  I have also added to these base packages, functionality for `inner, outer and hadamard products` as well as extending the graphical capabilities of the Cayley-Dickson graphs to include layers, so as to improve readability when graphing high order complex numbers, sucj as Octonions or Sedenions.  This allows the user to visualise each individual rotation group easilly if so wished, or limit the graph to a specific number of layers, and specific direction of rotation as clockwise `-` and anti-clockwise `+` rotations are handled as seperate layers.
 
+### **`Coming Soon`**
+
+One major issue with the `group()` method is its reliance on graph-tool, while a very good tool
+for network graphs, it is only availible on Linux or OSX platforms. I will be updating this to
+use plotly instead, to give it compatability to run on Windows platforms as well.
+
 ### **`Requirements`**
 
 The following packages are required, mostly for the graphical functionality, if you remove the group() and plot() methods, you no longer need these requirements and the package can work standalone:
