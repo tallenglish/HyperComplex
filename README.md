@@ -74,14 +74,14 @@ AE = H([1,-2,-3,-4])
 AF = O()
 AG = cayley_dickson_construction(V)()
 
-print("Addition:\n", 			AF + AA, "\n", AF + O(0,AA), "\n")
-print("Multiplication:\n", 		2 * AA, "\n")
-print("Comparison:\n",			AA == (1,2,3,4), "\n")
-print("Lengths:\n",				len(AA), "\n", len(AG), "\n")
-print("Square:\n",				AA.square(), "\n")
-print("Norm:\n",				AA.norm(), "\n")
-print("Inverse:\n",				AA.inverse(), "\n", 1 / AA, "\n")
-print("Cacheing:\n",			H.__mul__.cache_info())
+print("Addition:", AF + AA, AF + O(0, AA))
+print("Multiplication:", 2 * AA)
+print("Comparison:", AA == (1,2,3,4))
+print("Lengths:", len(AA), len(AG))
+print("Square:", AA.square())
+print("Norm:", AA.norm())
+print("Inverse:", AA.inverse(), 1 / AA)
+print("Cacheing:", H.__mul__.cache_info())
 ```
 
 ```
@@ -116,10 +116,10 @@ Cacheing:
 ### **`HyperComplex Methods`**
 
 ```python
-print("Real Part:\n",           AA.real, "\n")
-print("Imaginary Part:\n",      AA.imag, "\n")
-print("Coefficients:\n",        AA.coefficients(), "\n")
-print("Conjugate Transpose:\n", AA.conjugate())
+print("Real Part:", AA.real)
+print("Imaginary Part:", AA.imag)
+print("Coefficients:", AA.coefficients())
+print("Conjugate Transpose:", AA.conjugate())
 ```
 
 ```
@@ -137,11 +137,11 @@ Conjugate Transpose:
 ```
 
 ```python
-print("String Format:\n",       AA.asstring(translate=True), "\n")
-print("String Format:\n",       AE.asstring(translate=True), "\n")
-print("Tuple Format:\n",        AA.astuple(), "\n")
-print("List Format:\n",         AA.aslist(), "\n")
-print("Object Format:\n",       AA.asobject())
+print("String Format:", AA.asstring(translate=True))
+print("String Format:", AE.asstring(translate=True))
+print("Tuple Format:", AA.astuple())
+print("List Format:", AA.aslist())
+print("Object Format:", AA.asobject())
 ```
 
 ```
@@ -162,9 +162,9 @@ Object Format:
 ```
 
 ```python
-print("Inner Product:\n",       AA.innerproduct(AB), "\n")
-print("Outer Product:\n",       AA.outerproduct(AB, asstring=True, translate=True), "\n")
-print("Hadamard Product:\n",    AA.hadamardproduct(AB, asobject=True))
+print("Inner Product:", AA.innerproduct(AB))
+print("Outer Product:", AA.outerproduct(AB, asstring=True, translate=True))
+print("Hadamard Product:", AA.hadamardproduct(AB, asobject=True))
 ```
 
 ```
@@ -188,10 +188,10 @@ These can have various options to alter how the data is handed back, `asstring=T
 If you select `asobject=True (default)` then the function will output list of HyperComplex objects, `astuple=True` and `aslist=True` will return a tuple or list array accordingly.  There is also `asindex=True`, which returns the sign and index id for each cell.
 
 ```python
-print("String Matrix:\n",		AA.matrix(asstring=True, translate=True), "\n")
-print("String Matrix:\n",		AA.matrix(asstring=True, translate=True, indices="1abcd"), "\n")
-print("Object Matrix:\n",		AA.matrix(asobject=True), "\n")
-print("Index ID:\n",       		AA.matrix(asindex=True, asstring=True))
+print("String Matrix:", AA.matrix(asstring=True, translate=True))
+print("String Matrix:", AA.matrix(asstring=True, translate=True, indices="1abcd"))
+print("Object Matrix:", AA.matrix(asobject=True))
+print("Index ID:", AA.matrix(asindex=True, asstring=True))
 ```
 
 ```
