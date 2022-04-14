@@ -114,11 +114,19 @@ def cayley_dickson_construction(parent):
 
 		raise ValueError("The parent type must be Real or HyperComplex. (No coefficients found.)")
 
+	def option(name, default, **options):
+
+		if name in options:
+
+			return options[name]
+
+		return default
+
 	class HyperComplex(BaseNumber):
 
 		# Class Data Properties
 
-		dimensions = 2 * parent.dimensions
+		dimensions = parent.dimensions * 2
 		order = parent.order + 1
 
 		@property
@@ -178,18 +186,19 @@ def cayley_dickson_construction(parent):
 
 			# Optional Arguments
 
-			element = args["element"] if "element" in args else "e"
-			indices = args["indices"] if "indices" in args else "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX"
-			translate = args["translate"] if "translate" in args else False
-			asstring = args["asstring"] if "asstring" in args else False
-			asobject = args["asobject"] if "asobject" in args else False
-			astuple = args["astuple"] if "astuple" in args else False
-			aslist = args["aslist"] if "aslist" in args else False
-			asindex = args["asindex"]  if "asindex" in args else False
-			index = args["index"] if "index" in args else None
-			value = args["value"] if "value" in args else input
+			element = option("element", "e", **args)
+			indices = option("indices", "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX", **args)
+			translate = option("translate", False, **args)
+			asindex = option("asindex", False, **args)
+			asstring = option("asstring", False, **args)
+			astuple = option("astuple", False, **args)
+			aslist = option("aslist", False, **args)
+			asobject = option("asobject", False, **args)
+			showplus = option("showplus", False, **args)
+			index = option("index", None, **args)
+			value = option("value", input, **args)
 
-			plus = "+" if "showplus" in args and args["showplus"] else ""
+			plus = "+" if showplus else ""
 			base = self.base()
 
 			if type(indices) != list:
@@ -215,12 +224,11 @@ def cayley_dickson_construction(parent):
 
 			elif type(value) is int and type(index) is int:
 
-				# Used bu the HyperComplex.group() function to add named elements
+				# Used by the group() function to add named elements
 				# to the rotation graph
 
-				# HyperComplex.group() required 0 index, HyperComplex.plot() 1 index
-				# starting arrays, group() also shows negativity as > len(self)
-				# numbering
+				# group() required 0 index, plot() 1 index starting arrays,
+				# group() also shows negativity as > len(self) numbering
 
 				is_negative = index >= len(self)
 
@@ -337,10 +345,10 @@ def cayley_dickson_construction(parent):
 
 		def matrixdisplay(self, result, **args):
 
-			asstring = args["asstring"] if "asstring" in args else False
-			asobject = args["asobject"] if "asobject" in args else False
-			astuple = args["astuple"] if "astuple" in args else False
-			aslist = args["aslist"] if "aslist" in args else False
+			asstring = option("asstring", False, **args)
+			asobject = option("asobject", False, **args)
+			astuple = option("astuple", False, **args)
+			aslist = option("aslist", False, **args)
 
 			if asstring and not (asobject | astuple | aslist):
 
@@ -355,9 +363,9 @@ def cayley_dickson_construction(parent):
 
 		def outerproduct(self, other, **args):
 
-			asobject = args["asobject"] if "asobject" in args else False
-			astuple = args["astuple"] if "astuple" in args else False
-			aslist = args["aslist"] if "aslist" in args else False
+			asobject = option("asobject", False, **args)
+			astuple = option("astuple", False, **args)
+			aslist = option("aslist", False, **args)
 
 			other = HyperComplex.coerce(other)
 
@@ -382,6 +390,7 @@ def cayley_dickson_construction(parent):
 					temp = temp.astuple() if astuple else temp
 					temp = temp.asobject() if asobject else temp
 					temp = temp.aslist() if aslist else temp
+
 					result[i][j] = temp
 
 			result = self.matrixdisplay(result, **args)
@@ -394,9 +403,9 @@ def cayley_dickson_construction(parent):
 
 		def hadamardproduct(self, other, **args):
 
-			asobject = args["asobject"] if "asobject" in args else False
-			astuple = args["astuple"] if "astuple" in args else False
-			aslist = args["aslist"] if "aslist" in args else False
+			asobject = option("asobject", False, **args)
+			astuple = option("astuple", False, **args)
+			aslist = option("aslist", False, **args)
 
 			other = HyperComplex.coerce(other)
 			base = self.base()
@@ -414,6 +423,7 @@ def cayley_dickson_construction(parent):
 
 				x = a[i]
 				y = b[i]
+
 				result[i] = self.named(base(x * y), index=i, **args)
 
 			if asobject | astuple | aslist:
@@ -430,9 +440,9 @@ def cayley_dickson_construction(parent):
 
 		def matrix(self, **args):
 
-			asobject = args["asobject"] if "asobject" in args else False
-			astuple = args["astuple"] if "astuple" in args else False
-			aslist = args["aslist"] if "aslist" in args else False
+			asobject = option("asobject", False, **args)
+			astuple = option("astuple", False, **args)
+			aslist = option("aslist", False, **args)
 
 			a = list(map(self.indexes, range(self.dimensions)))
 
@@ -448,6 +458,7 @@ def cayley_dickson_construction(parent):
 					temp = temp.astuple() if astuple else temp
 					temp = temp.asobject() if asobject else temp
 					temp = temp.aslist() if aslist else temp
+
 					result[i][j] = temp
 
 			result = self.matrixdisplay(result, **args)
@@ -535,7 +546,11 @@ def cayley_dickson_construction(parent):
 
 			if any(coefficients[dimensions:]):
 
-				a = F"Error converting {self.__class__.__name__}[{self.dimensions}] to {ctype.__name__}"
+				size = self.dimensions
+				classname = self.__class__.__name__
+				typename = ctype.__name__
+
+				a = F"Error converting {classname}[{size}] to {typename}"
 				b = "There are non-zero incompatible coefficients."
 
 				raise TypeError(a + ": " + b)
@@ -680,6 +695,10 @@ def cayley_dickson_algebra(level, base=float):
 		numbers = cayley_dickson_construction(numbers)
 
 	return numbers
+
+def debug(*values):
+
+	print(*values, sep="\n", end="\n\n")
 
 Real       = R     = cayley_dickson_real_base()
 Complex    = C     = cayley_dickson_construction(R)

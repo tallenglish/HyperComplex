@@ -43,7 +43,7 @@ def plot(**options):
 
 		self = None
 
-	if self == None or (hasattr(self, "order") and self.order > 5):
+	if self == None or (hasattr(self, "order") and self.order > 8):
 
 		raise NotImplementedError
 
@@ -56,7 +56,7 @@ def plot(**options):
 	positives = sea.color_palette(poscmap, numcolors)
 	negatives = sea.color_palette(negcmap, numcolors)
 	rectangle = mpl.patches.Rectangle
-	extras = {"snap":False,"lw":1,"zorder":1}
+	extras = dict(snap=False, lw=1, zorder=1)
 
 	for (x, y), value in np.ndenumerate(matrix):
 
