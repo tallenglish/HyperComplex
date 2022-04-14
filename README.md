@@ -23,8 +23,8 @@ This library has been taylored to use ***`Jupiter / Visual Studio Code Notebooks
 ### **`Coming Soon`**
 
 One major issue with the `group()` method is its reliance on graph-tool, while a very good tool
-for network graphs, it is only availible on Linux or OSX platforms. I will be updating this to
-use plotly instead, to give it compatability to run on Windows platforms as well.
+for network graphs, it is only availible on Linux or OSX. I will be updating this to
+use plotly instead, so it is also compatabile with Windows.
 
 ### **`Requirements`**
 
