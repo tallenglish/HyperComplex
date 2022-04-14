@@ -132,7 +132,7 @@ Imaginary Part:
 Coefficients:
  (1.0, 2.0, 3.0, 4.0)
 
-Conjugate Transpose:
+Conjugate:
  (1 -2 -3 -4)
 ```
 
