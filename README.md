@@ -187,9 +187,9 @@ The Hadamard product (also known as the element-wise, entrywise or Schur product
 
 The Hadamard product is associative, distributive and commutative.
 
-&#10092; A &vert; &#10092; B &vert; = A &middot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
+&#10092; A &vert; &#10092; B &vert; = A &odot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
-&vert; A &#10093; &vert; B &#10093; = A &middot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
+&vert; A &#10093; &vert; B &#10093; = A &odot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
 ```python
 debug("Inner Product:", AA.innerproduct(AB))
