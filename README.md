@@ -161,6 +161,34 @@ Object Format:
  (1 2 3 4)
 ```
 
+### **`HyperComplex Products`**
+
+#### **`Inner, Dot, Scalar Product`**
+
+Geometrically, it is the product of the Euclidean magnitudes of the two vectors and the cosine of the angle between them. In the case of vector spaces, the dot product is used for defining lengths (the length of a vector is the square root of the dot product of the vector by itself) and angles (the cosine of the angle of two vectors is the quotient of their dot product by the product of their lengths).
+
+The dot and inner product are commutative:
+
+$\braket{A \vert B} = A \cdot B = A_{\mu} B^{\nu}$
+
+#### **`Outer, Kroneecker, Tensor Product`**
+
+The outer product of two coordinate vectors is a matrix. If the two vectors have dimensions n and m, then their outer product is an n × m matrix. More generally, given two tensors (multidimensional arrays of numbers), their outer product is a tensor. The outer product of tensors is also referred to as their tensor product and can be used to define the tensor algebra.
+
+Like the cross product, the outer product is anti-commutative.
+
+$\ket{A} \bra{B} = A \otimes B = A^{\mu} B_{\nu}$
+
+#### **`Hadamard, Entrywise, Schur Product`**
+
+The Hadamard product (also known as the element-wise, entrywise or Schur product) is a binary operation that takes two matrices of the same dimensions and produces another matrix of the same dimension as the operands where each element i, j is the product of elements i, j of the original two matrices. It should not be confused with the more common matrix product.
+
+The Hadamard product is associative and distributive. Unlike the matrix product, it is also commutative.
+
+$\bra{A} \bra{B} = A \odot B = A^{\mu} B^{\nu}$
+
+$\ket{A} \ket{B} = A \odot B = A_{\mu} B_{\nu}$
+
 ```python
 debug("Inner Product:", AA.innerproduct(AB))
 debug("Outer Product:", AA.outerproduct(AB, asstring=True, translate=True))
