@@ -169,7 +169,7 @@ Geometrically, it is the product of the Euclidean magnitudes of the two vectors 
 
 The dot and inner product are commutative:
 
-$\braket{A \vert B} = A \cdot B = A_{\mu} B^{\nu}$
+&#10092; A &vert; B &#10093; = A &middot; B = A<sub>&mu;</sub> B<sup>&nu;</sup>
 
 #### **`Outer, Kroneecker, Tensor Product`**
 
@@ -177,7 +177,7 @@ The outer product of two coordinate vectors is a matrix. If the two vectors have
 
 Like the cross product, the outer product is anti-commutative.
 
-$\ket{A} \bra{B} = A \otimes B = A^{\mu} B_{\nu}$
+&vert; A &#10093; &#10092; B &vert; = A &otimes; B = A<sup>&mu;</sup> B<sub>&nu;</sub>
 
 #### **`Hadamard, Entrywise, Schur Product`**
 
@@ -185,9 +185,9 @@ The Hadamard product (also known as the element-wise, entrywise or Schur product
 
 The Hadamard product is associative and distributive. Unlike the matrix product, it is also commutative.
 
-$\bra{A} \bra{B} = A \odot B = A^{\mu} B^{\nu}$
+&#10092; A &vert; &#10092; B &vert; = A &middot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
-$\ket{A} \ket{B} = A \odot B = A_{\mu} B_{\nu}$
+&vert; A &#10093; &vert; B &#10093; = A &middot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
 ```python
 debug("Inner Product:", AA.innerproduct(AB))
