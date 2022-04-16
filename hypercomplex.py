@@ -466,7 +466,6 @@ def cayley_dickson_construction(parent):
 			return result
 
 		# Output Types
-		# Don't Use __str__ or __repr__ as they break other functions
 
 		def asobject(self):
 
