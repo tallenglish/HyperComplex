@@ -163,27 +163,29 @@ Object Format:
 
 ### **`HyperComplex Products`**
 
-#### **`Inner, Dot, Scalar Product`**
+Various vector products.
 
-Geometrically, it is the product of the Euclidean magnitudes of the two vectors and the cosine of the angle between them. In the case of vector spaces, the dot product is used for defining lengths (the length of a vector is the square root of the dot product of the vector by itself) and angles (the cosine of the angle of two vectors is the quotient of their dot product by the product of their lengths).
+#### **`Inner Product`**
 
-The dot and inner product are commutative:
+The inner product (also known as dot or scalar product), is the product of the Euclidean magnitudes of the two vectors and the cosine of the angle between them. In the case of vector spaces, the inner product is used for defining lengths (the length of a vector is the square root of the inner product of the vector by itself) and angles (the cosine of the angle of two vectors is the quotient of their inner product by the product of their lengths).
+
+The inner product is commutative:
 
 &#10092; A &vert; B &#10093; = A &middot; B = A<sub>&mu;</sub> B<sup>&nu;</sup>
 
-#### **`Outer, Kroneecker, Tensor Product`**
+#### **`Outer Product`**
 
-The outer product of two coordinate vectors is a matrix. If the two vectors have dimensions n and m, then their outer product is an n × m matrix. More generally, given two tensors (multidimensional arrays of numbers), their outer product is a tensor. The outer product of tensors is also referred to as their tensor product and can be used to define the tensor algebra.
+The outer product (also known as Kroneecker or tensor product) of two coordinate vectors is a matrix. If the two vectors have dimensions n and m, then their outer product is an n × m matrix. More generally, given two tensors (multidimensional arrays of numbers), their outer product is a tensor. The outer product of tensors is also referred to as their tensor product and can be used to define the tensor algebra.
 
-Like the cross product, the outer product is anti-commutative.
+The outer product is anti-commutative.
 
 &vert; A &#10093; &#10092; B &vert; = A &otimes; B = A<sup>&mu;</sup> B<sub>&nu;</sub>
 
-#### **`Hadamard, Entrywise, Schur Product`**
+#### **`Hadamard Product`**
 
 The Hadamard product (also known as the element-wise, entrywise or Schur product) is a binary operation that takes two matrices of the same dimensions and produces another matrix of the same dimension as the operands where each element i, j is the product of elements i, j of the original two matrices. It should not be confused with the more common matrix product.
 
-The Hadamard product is associative and distributive. Unlike the matrix product, it is also commutative.
+The Hadamard product is associative, distributive and commutative.
 
 &#10092; A &vert; &#10092; B &vert; = A &middot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
