@@ -34,6 +34,10 @@ class BaseNumber(Number):
 
 		return self.coefficients()[index]
 
+	def __setitem__(self, index, value):
+
+		self.coefficients()[index] = value
+
 	def __contains__(self, needle):
 
 		return needle in self.coefficients()
@@ -46,26 +50,9 @@ class BaseNumber(Number):
 
 		return str(self)
 
-	def __format__(self, spec):
+	def __format__(self, fmt):
 
-		# spec      ::=  [[fill]align][sign][#][0][width][group][.precision][type]
-		# fill      ::=  <any character>
-		# align     ::=  "<" | ">" | "=" | "^"
-		# sign      ::=  "+" | "-" | " "
-		# width     ::=  digit+
-		# group     ::=  "_" | ","
-		# precision ::=  digit+
-		# type      ::=  b | c | d | e | E | f | F | g | G | n | o | s | x | X | %
-
-		# https://docs.python.org/3.9/library/string.html#formatspec
-
-		if not spec:
-
-			spec = "g"
-
-		coefficients = [F"{c:{spec}}" for c in self.coefficients()]
-
-		return "(" + " ".join(coefficients) + ")"
+		return "(" + ", ".join([str(x) for x in self.coefficients()]) + ")"
 
 def cayley_dickson_real_base(base=float):
 
@@ -255,7 +242,7 @@ def cayley_dickson_construction(parent):
 				translated = indices[index] if enabled else F"{element}{index}"
 
 				sign = "-" if value < 0 else plus
-				value = "" if abs(value) == base(1) else abs(value)
+				value = "" if abs(value) == base(1) else "{:g}".format(abs(value))
 				translated = "" if translated == "1" and value else translated
 				input = F"{sign}{value}{translated}"
 

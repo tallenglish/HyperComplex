@@ -86,31 +86,31 @@ debug("Cacheing:", H.__mul__.cache_info())
 
 ```
 Addition:
- (1 2 3 4 0 0 0 0)
- (0 0 0 0 1 2 3 4)
+(1.0, 2.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0)
+(0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0)
 
 Multiplication:
- (2 4 6 8)
+(2.0, 4.0, 6.0, 8.0)
 
 Comparison:
- True
+True
 
 Lengths:
- 4
- 512
+4
+512
 
 Square:
- 30.0
+30.0
 
 Norm:
- 5.477225575051661
+5.477225575051661
 
 Inverse:
- (0.0333333 -0.0666667 -0.1 -0.133333)
- (0.0333333 -0.0666667 -0.1 -0.133333)
+(0.03333333333333333, -0.06666666666666667, -0.1, -0.13333333333333333)
+(0.03333333333333333, -0.06666666666666667, -0.1, -0.13333333333333333)
 
 Cacheing:
- CacheInfo(hits=103435, misses=100, maxsize=128, currsize=100)
+CacheInfo(hits=261, misses=74, maxsize=128, currsize=74)
 ```
 
 ### **`HyperComplex Methods`**
@@ -124,16 +124,16 @@ debug("Conjugate:", AA.conjugate())
 
 ```
 Real Part:
- 1.0
+1.0
 
 Imaginary Part:
- (2.0, 3.0, 4.0)
+(2.0, 3.0, 4.0)
 
 Coefficients:
- (1.0, 2.0, 3.0, 4.0)
+(1.0, 2.0, 3.0, 4.0)
 
 Conjugate:
- (1 -2 -3 -4)
+(1.0, -2.0, -3.0, -4.0)
 ```
 
 ```python
@@ -146,19 +146,19 @@ debug("Object Format:", AA.asobject())
 
 ```
 String Format:
- 1 + 2.0i + 3.0j + 4.0k
+1 + 2i + 3j + 4k
 
 String Format:
- 1 - 2.0i - 3.0j - 4.0k
+1 - 2i - 3j - 4k
 
 Tuple Format:
- (1.0, 2.0, 3.0, 4.0)
+(1.0, 2.0, 3.0, 4.0)
 
 List Format:
- [1.0, 2.0, 3.0, 4.0]
+[1.0, 2.0, 3.0, 4.0]
 
 Object Format:
- (1 2 3 4)
+(1.0, 2.0, 3.0, 4.0)
 ```
 
 ### **`HyperComplex Products`**
@@ -199,16 +199,16 @@ debug("Hadamard Product:", AA.hadamardproduct(AB, asobject=True))
 
 ```
 Inner Product:
- 30.0
+30.0
 
 Outer Product:
-    1  -2.0i  -3.0j  -4.0k
- 2.0i    4.0  -6.0k   8.0j
- 3.0j   6.0k    9.0 -12.0i
- 4.0k  -8.0j  12.0i   16.0
+ 1  -2i  -3j  -4k
+2i    4  -6k   8j
+3j   6k    9 -12i
+4k  -8j  12i   16
 
 Hadamard Product:
- (1 4 9 16)
+(1.0, 4.0, 9.0, 16.0)
  ```
 
 ### **`HyperComplex Multiplication Matricies`**
@@ -224,24 +224,24 @@ debug("Index Matrix:", AF.matrix(asindex=True, asstring=True))
 
 ```
 String Matrix:
- 1  i  j  k  L  I  J  K
- i -1  k -j  I -L -K  J
- j -k -1  i  J  K -L -I
- k  j -i -1  K -J  I -L
- L -I -J -K -1  i  j  k
- I  L -K  J -i -1 -k  j
- J  K  L -I -j  k -1 -i
- K -J  I  L -k -j  i -1
+1  i  j  k  L  I  J  K
+i -1  k -j  I -L -K  J
+j -k -1  i  J  K -L -I
+k  j -i -1  K -J  I -L
+L -I -J -K -1  i  j  k
+I  L -K  J -i -1 -k  j
+J  K  L -I -j  k -1 -i
+K -J  I  L -k -j  i -1
 
 Index Matrix:
- 1  2  3  4  5  6  7  8
- 2 -1  4 -3  6 -5 -8  7
- 3 -4 -1  2  7  8 -5 -6
- 4  3 -2 -1  8 -7  6 -5
- 5 -6 -7 -8 -1  2  3  4
- 6  5 -8  7 -2 -1 -4  3
- 7  8  5 -6 -3  4 -1 -2
- 8 -7  6  5 -4 -3  2 -1
+1  2  3  4  5  6  7  8
+2 -1  4 -3  6 -5 -8  7
+3 -4 -1  2  7  8 -5 -6
+4  3 -2 -1  8 -7  6 -5
+5 -6 -7 -8 -1  2  3  4
+6  5 -8  7 -2 -1 -4  3
+7  8  5 -6 -3  4 -1 -2
+8 -7  6  5 -4 -3  2 -1
 ```
 
 ```python
@@ -251,20 +251,20 @@ debug("Object Matrix:", AF.matrix(asobject=True))
 
 ```
 String Matrix:
- 1  a  b  c  d  e  f  g
- a -1  c -b  e -d -g  f
- b -c -1  a  f  g -d -e
- c  b -a -1  g -f  e -d
- d -e -f -g -1  a  b  c
- e  d -g  f -a -1 -c  b
- f  g  d -e -b  c -1 -a
- g -f  e  d -c -b  a -1
+1  a  b  c  d  e  f  g
+a -1  c -b  e -d -g  f
+b -c -1  a  f  g -d -e
+c  b -a -1  g -f  e -d
+d -e -f -g -1  a  b  c
+e  d -g  f -a -1 -c  b
+f  g  d -e -b  c -1 -a
+g -f  e  d -c -b  a -1
 
 Object Matrix:
-[[(1 0 0 0), ( 0 1 0 0), (0 0 1 0), (0 0 0 1)],
- [(0 1 0 0), (-1 0 0 0), (0 0 0 1), (0 0 -1 0)],
- [(0 0 1 0), ( 0 0 0 -1), (-1 0 0 0), (0 1 0 0)],
- [(0 0 0 1), ( 0 0 1 0), (0 -1 0 0), (-1 0 0 0)]]
+[[(1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, 1.0)],
+[(0.0, 1.0, 0.0, 0.0), (-1.0, 0.0, 0.0, 0.0), (-0.0, 0.0, 0.0, 1.0), (-0.0, 0.0, -1.0, 0.0)],
+[(0.0, 0.0, 1.0, 0.0), (0.0, 0.0, 0.0, -1.0), (-1.0, 0.0, 0.0, 0.0), (0.0, 1.0, 0.0, 0.0)],
+[(0.0, 0.0, 0.0, 1.0), (0.0, 0.0, 1.0, 0.0), (0.0, -1.0, 0.0, 0.0), (-1.0, 0.0, -0.0, 0.0)]]
 ```
 
 ### **`HyperComplex Plots`**
@@ -321,7 +321,7 @@ A [complex number](http://en.wikipedia.org/wiki/Complex_number) is a number that
 
 The significance of the imaginary unit:
 
-- i² = -1
+- i<sup>2</sup> = -1
 
 ```python
 # NOTE: Takes less than 2s
@@ -349,7 +349,7 @@ The significance of the higher order imaginary units:
 - i = jk
 - j = ki
 - k = ij
-- i² = j² = k² = -1
+- i<sup>2</sup> = j<sup>2</sup> = k<sup>2</sup> = -1
 - ijk = -1
 
 ```python
@@ -375,8 +375,8 @@ plot(order=2, diverging=True, show=True)
 
 The significance of the higher order imaginary units:
 
-- [L, I, J, K] = [1, i, j, k] * L
-- L² = I² = J² = K² = -1
+- [L, I, J, K] = [1, i, j, k] &times; L
+- L<sup>2</sup> = I<sup>2</sup> = J<sup>2</sup> = K<sup>2</sup> = -1
 - IJK = L
 
 ```python
@@ -404,10 +404,10 @@ plot(order=3, diverging=True, show=True)
 
 The significance of the higher order imaginary units:
 
-- [m, p, q, r] = [1, i, j, k] * m
-- [M, P, Q, R] = [L, I, J, K] * m
-- m² = p² = q² = r² = -1
-- M² = P² = Q² = R² = -1
+- [m, p, q, r] = [1, i, j, k] &times; m
+- [M, P, Q, R] = [L, I, J, K] &times; m
+- m<sup>2</sup> = p<sup>2</sup> = q<sup>2</sup> = r<sup>2</sup> = -1
+- M<sup>2</sup> = P<sup>2</sup> = Q<sup>2</sup> = R<sup>2</sup> = -1
 - pqr = m
 - PQR = M
 
@@ -438,12 +438,12 @@ Pathions form a 32-dimensional algebra over the reals obtained by applying the C
 
 The significance of the higher order imaginary units:
 
-- [n, s, t, u] = [1, i, j, k] * n
-- [N, S, T, U] = [L, I, J, K] * n
-- [o, v, w, x] = [m, p, q, r] * n
-- [O, V, W, X] = [M, P, Q, R] * n
-- n² = s² = t² = u² = o² = v² = w² = x² = -1
-- N² = S² = T² = U² = O² = V² = W² = X² = -1
+- [n, s, t, u] = [1, i, j, k] &times; n
+- [N, S, T, U] = [L, I, J, K] &times; n
+- [o, v, w, x] = [m, p, q, r] &times; n
+- [O, V, W, X] = [M, P, Q, R] &times; n
+- n<sup>2</sup> = s<sup>2</sup> = t<sup>2</sup> = u<sup>2</sup> = o<sup>2</sup> = v<sup>2</sup> = w<sup>2</sup> = x<sup>2</sup> = -1
+- N<sup>2</sup> = S<sup>2</sup> = T<sup>2</sup> = U<sup>2</sup> = O<sup>2</sup> = V<sup>2</sup> = W<sup>2</sup> = X<sup>2</sup> = -1
 - stu = n
 - STU = N
 - vwx = o
