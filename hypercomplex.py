@@ -1,5 +1,5 @@
 from functools import lru_cache
-from dunders import dunders, math_all
+from dunders import dunders, maths
 from numbers import Number
 
 import numpy as np
@@ -38,6 +38,10 @@ class BaseNumber(Number):
 
 		self.coefficients()[index] = value
 
+	def __delitem__(self, index):
+
+		self.coefficients()[index] = 0
+
 	def __contains__(self, needle):
 
 		return needle in self.coefficients()
@@ -60,7 +64,7 @@ def cayley_dickson_real_base(base=float):
 
 		raise TypeError("The base type must be derived from Number.")
 
-	@dunders(base=base, names=math_all, force=False)
+	@dunders(base=base, names=maths, force=False)
 	class Real(BaseNumber, base):
 
 		dimensions = 1
@@ -293,7 +297,10 @@ def cayley_dickson_construction(parent):
 
 				if len(args) > len(self):
 
-					raise TypeError(f"Too many args. Got {len(args)} expecting at most {len(self)}.")
+					la = len(args)
+					ls = len(self)
+
+					raise TypeError(F"Too many args. Got {la} expecting at most {ls}.")
 
 				if len(self) != len(args):
 
@@ -536,10 +543,7 @@ def cayley_dickson_construction(parent):
 				classname = self.__class__.__name__
 				typename = ctype.__name__
 
-				a = F"Error converting {classname}[{size}] to {typename}"
-				b = "There are non-zero incompatible coefficients."
-
-				raise TypeError(a + ": " + b)
+				raise TypeError(F"Error converting {classname}[{size}] to {typename}: There are non-zero incompatible coefficients.")
 
 			return ctype(*coefficients[:dimensions])
 

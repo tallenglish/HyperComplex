@@ -48,13 +48,16 @@ math_inplace = ["iadd", "ifloordiv", "imod", "imul", "imatmul", "ipow", "isub", 
 # += iadd, -= isub, *= imul, //= ifloordiv, /= idiv, %= imod, **= ipow
 # abs(x), ceil(x)
 
-convert_all = convert_unitary
-compare_all = compare_unitary + compare_binary + compare_reverse + compare_inplace
-bitwise_all = bitwise_unitary + bitwise_binary + bitwise_reverse + bitwise_inplace
-object_all = get_unitary + set_unitary + del_unitary + obj_unitary + arr_unitary
-math_all = math_unitary + math_binary + math_reverse + math_inplace
+# Double Underscore Meta Definitions
 
-def dunders(base=None, names=math_all, force=False):
+converts = convert_unitary
+compares = compare_unitary + compare_binary + compare_reverse + compare_inplace
+bitwises = bitwise_unitary + bitwise_binary + bitwise_reverse + bitwise_inplace
+objects = get_unitary + set_unitary + del_unitary + obj_unitary + arr_unitary
+maths = math_unitary + math_binary + math_reverse + math_inplace
+everything = converts + compares + bitwises + objects + maths
+
+def dunders(base=None, names=everything, force=False):
 
 	names = tuple(F"__{name}__" for name in names)
 
