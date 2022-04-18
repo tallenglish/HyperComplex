@@ -1,8 +1,10 @@
 # Double Underscore Function Definitions
 
-convert_unitary = ["bool", "int", "float", "complex"]
+convert_unitary = ["bool", "complex", "float", "format", "hex", "index", "int", "long", "oct", "str", "unicode"]
 
-# bool(x), int(x), float(x), complex(x) (Unitary Operators)
+# Common: bool, float, format, int, long, str, complex (Unitary Operators)
+# Python 2: oct, hex (Unitary Operators)
+# Python 3: index (Unitary Operators)
 
 compare_unitary = ["eq", "ge", "gt", "le", "lt", "ne"]
 compare_binary = ["and", "or", "xor"]
@@ -22,9 +24,13 @@ bitwise_inplace = ["ilshift", "irshift"]
 # "<<", ">>" (Bianary/Reverse Operators)
 # ">>=", "<<=" (Inplace Operators)
 
-get_unitary = ['get', 'getattr', 'getitem', 'getslice']
-set_unitary = ['set', 'setattr', 'setitem', 'setslice']
-del_unitary = ['del', 'delattr', 'delitem', 'delslice']
+get_unitary = ["get", "getattr", "getitem", "getslice"]
+set_unitary = ["set", "setattr", "setitem", "setslice"]
+del_unitary = ["del", "delattr", "delitem", "delslice"]
+obj_unitary = ["coerce", "dict", "dir", "fspath", "hash", "import", "reduce", "repr", "slots"]
+arr_unitary = ["contains", "missing", "nonzero", "len", "sizeof"]
+
+# Python 2: nonzero, getslice, setslice, delslice
 
 # x.y (Attribute)
 # x[y] (Item)
@@ -38,32 +44,15 @@ math_binary = ["add", "divmod", "floordiv", "mod", "mul", "matmul", "pow", "sub"
 math_reverse = ["radd", "rdivmod", "rfloordiv", "rmod", "rmul", "rmatmul", "rpow", "rsub", "rtruediv"]
 math_inplace = ["iadd", "ifloordiv", "imod", "imul", "imatmul", "ipow", "isub", "itruediv"]
 
+# + add, - sub, * mul, // floordiv, / div, % mod, ** pow
+# += iadd, -= isub, *= imul, //= ifloordiv, /= idiv, %= imod, **= ipow
 # abs(x), ceil(x)
-# "+", ""
 
-convert_all			= convert_unitary
-compare_all			= compare_unitary + compare_binary + compare_reverse + compare_inplace
-bitwise_all			= bitwise_unitary + bitwise_binary + bitwise_reverse + bitwise_inplace
-math_all			= math_unitary + math_binary + math_reverse + math_inplace
-
-others = [
-	'coerce', 'contains',
-	'dict', 'dir',
-	'format', 'fspath',
-	'hash', 'hex',
-	'import',
-	'index',
-	'len', 'sizeof',
-
-	'long',
-	'missing',
-	'nonzero',
-	'reduce',
-	'repr',
-	'slots',
-	'str',
-	'unicode',
-]
+convert_all = convert_unitary
+compare_all = compare_unitary + compare_binary + compare_reverse + compare_inplace
+bitwise_all = bitwise_unitary + bitwise_binary + bitwise_reverse + bitwise_inplace
+object_all = get_unitary + set_unitary + del_unitary + obj_unitary + arr_unitary
+math_all = math_unitary + math_binary + math_reverse + math_inplace
 
 def dunders(base=None, names=math_all, force=False):
 
