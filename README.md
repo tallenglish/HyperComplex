@@ -171,7 +171,7 @@ The inner product (also known as dot or scalar product), is the product of the E
 
 The inner product is commutative:
 
-&#10092; A &vert; B &#10093; = A &middot; B = A<sub>&mu;</sub> B<sup>&nu;</sup>
+&#10092;A&vert;B&#10093; = A &middot; B = A<sub>&mu;</sub> B<sup>&nu;</sup>
 
 #### **`Outer Product`**
 
@@ -179,7 +179,7 @@ The outer product (also known as Kroneecker or tensor product) of two coordinate
 
 The outer product is anti-commutative.
 
-&vert; A &#10093; &#10092; B &vert; = A &otimes; B = A<sup>&mu;</sup> B<sub>&nu;</sub>
+&vert;A&#10093;&#10092;B&vert; = A &otimes; B = A<sup>&mu;</sup> B<sub>&nu;</sub>
 
 #### **`Hadamard Product`**
 
@@ -187,9 +187,9 @@ The Hadamard product (also known as the element-wise, entrywise or Schur product
 
 The Hadamard product is associative, distributive and commutative.
 
-&#10092; A &vert; &#10092; B &vert; = A &odot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
+&#10092;A&vert;&#10092;B&vert; = A &odot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
-&vert; A &#10093; &vert; B &#10093; = A &odot; B = A<sup>&mu;</sup> B<sup>&nu;</sup>
+&vert;A&#10093;&vert;B&#10093; = A &odot; B = A<sup>&mu;</sup> B<sup>&nu;</sup>
 
 ```python
 debug("Inner Product:", AA.innerproduct(AB))
