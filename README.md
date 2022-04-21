@@ -35,7 +35,7 @@ The following packages are required, mostly for the graphical functionality, if 
 - numpy (HyperComplex, Group, Plot)
 - argparse (Group, Plot)
 - itertools (Group)
-- graph_tool (Group)
+- graph-tool (Group)
 - networkx (Group)
 - matplotlib (Plot)
 - seaborn (Plot)
@@ -189,7 +189,7 @@ The Hadamard product is associative, distributive and commutative.
 
 &#10092; A &vert; &#10092; B &vert; = A &odot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
 
-&vert; A &#10093; &vert; B &#10093; = A &odot; B = A<sub>&mu;</sub> B<sub>&nu;</sub>
+&vert; A &#10093; &vert; B &#10093; = A &odot; B = A<sup>&mu;</sup> B<sup>&nu;</sup>
 
 ```python
 debug("Inner Product:", AA.innerproduct(AB))
