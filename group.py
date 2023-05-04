@@ -150,14 +150,14 @@ def group(**options):
 			continue
 
 		connections.append(edges(index))
-		total = nx.from_numpy_matrix(sum(connections))
+		total = nx.from_numpy_array(sum(connections))
 		indexes.append(index)
 
 		if nx.is_connected(total) and not (showall or showpos or showneg):
 
 			break
 
-	first = nx.from_numpy_matrix(connections[0])
+	first = nx.from_numpy_array(connections[0])
 	loops = nx.connected_components(first)
 	loops = [np.roll(x, -k) for k, x in enumerate(loops)]
 	graph = gt.Graph(directed=directed)
