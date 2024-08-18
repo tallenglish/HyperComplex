@@ -20,6 +20,16 @@ colors = [
 	"0080FF", # Blue    (R, X)
 ] * 2
 
+def colormap(order, size):
+
+	colors = []
+
+	for id in range(size):
+
+		colors.append(list(color(order, id)))
+
+	return colors
+
 def color(order, id):
 
 	negative = True if id >= 2**order else False
@@ -34,7 +44,7 @@ def color(order, id):
 
 		if negative:
 
-			out[i] *= 0.50 # Color 50% Darker If Negative
+			out[i] *= 0.75 # Color 25% Darker If Negative
 
 	return tuple(out)
 
@@ -59,6 +69,16 @@ locations = [
 	[4, 9], [3, 11], [-3, 11], [-4, 9],				# O, V, W, X Pathion
 ]
 
+def locationmap(order, size):
+
+	locations = {}
+
+	for id in range(size):
+
+		locations[id] = location(order, id)
+
+	return locations
+
 def location(order, id):
 
 	negative = True if id >= 2**order else False
@@ -71,4 +91,4 @@ def location(order, id):
 
 			location[i] *= -1 # Reversed Location If Negative
 
-	return location
+	return tuple(location)

@@ -1,5 +1,5 @@
 from functools import lru_cache
-from dunders import dunders, maths
+from dunders import dunders, math
 from numbers import Number
 
 import numpy as np
@@ -64,7 +64,7 @@ def cayley_dickson_real_base(base=float):
 
 		raise TypeError("The base type must be derived from Number.")
 
-	@dunders(base=base, names=maths, force=False)
+	@dunders(base=base, names=math, force=False)
 	class Real(BaseNumber, base):
 
 		dimensions = 1
@@ -690,15 +690,15 @@ def debug(*values):
 
 	print(*values, sep="\n", end="\n\n")
 
-Real       = R     = cayley_dickson_real_base()
-Complex    = C     = cayley_dickson_construction(R)
-Quaternion = Q = H = cayley_dickson_construction(C)
-Octonion   = O     = cayley_dickson_construction(H)
-Sedenion   = S     = cayley_dickson_construction(O)
-Pathion    = P     = cayley_dickson_construction(S)
-Chingon    = X     = cayley_dickson_construction(P)
-Routon     = U     = cayley_dickson_construction(X)
-Voudon     = V     = cayley_dickson_construction(U)
+Real       = R = cayley_dickson_real_base()
+Complex    = C = cayley_dickson_construction(R)
+Quaternion = H = cayley_dickson_construction(C)
+Octonion   = O = cayley_dickson_construction(H)
+Sedenion   = S = cayley_dickson_construction(O)
+Pathion    = P = cayley_dickson_construction(S)
+Chingon    = X = cayley_dickson_construction(P)
+Routon     = U = cayley_dickson_construction(X)
+Voudon     = V = cayley_dickson_construction(U)
 
 Order = {
 	0: Real(),

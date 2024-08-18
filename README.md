@@ -20,11 +20,9 @@ This package is a combination of the work done by [discretegames](https://github
 
 This library has been taylored to use ***`Jupiter / Visual Studio Code Notebooks`*** as well as work with command line for the graphical portions.  I have also added to these base packages, functionality for `inner, outer and hadamard products` as well as extending the graphical capabilities of the Cayley-Dickson graphs to include layers, so as to improve readability when graphing high order complex numbers, sucj as Octonions or Sedenions.  This allows the user to visualise each individual rotation group easilly if so wished, or limit the graph to a specific number of layers, and specific direction of rotation as clockwise `-` and anti-clockwise `+` rotations are handled as seperate layers.
 
-### **`Coming Soon`**
+### **`Updated Features`**
 
-One major issue with the `group()` method is its reliance on graph-tool, while a very good tool
-for network graphs, it is only availible on Linux or OSX. I will be updating this to
-use plotly instead, so it is also compatabile with Windows.
+The graphing function `group()` no longer relies on graph-tool for network graphs, due to only being availible on Linux or OSX platforms. I have updated this to use networkx and matplotlib dirrectly instead, so it is also compatabile with Windows platforms.
 
 ### **`Requirements`**
 
@@ -35,7 +33,6 @@ The following packages are required, mostly for the graphical functionality, if 
 - numpy (HyperComplex, Group, Plot)
 - argparse (Group, Plot)
 - itertools (Group)
-- graph-tool (Group)
 - networkx (Group)
 - matplotlib (Plot)
 - seaborn (Plot)
@@ -54,7 +51,7 @@ You can any of the following:
 
 - `R`, `Real` for real numbers (1 bit)
 - `C`, `Complex` for complex numbers (2 bit)
-- `H`, `Q`, `Quaternion` for quaternion numbers (4 bit)
+- `H`, `Quaternion` for quaternion numbers (4 bit)
 - `O`, `Octonion` for octonion numbers (8 bit)
 - `S`, `Sedenion` for sedenion numbers (16 bit)
 - `P`, `Pathion` for pathion numbers (32 bit)
@@ -308,7 +305,6 @@ Options:
 - `translate=False` : tranlates the indicies for easy reading.
 - `positives=False` : show all positive translations.
 - `negatives=False` : show all negative rotations.
-- `directed=True` : show arrows indicating direction of rotation.
 - `translate=False` : tranlates the indicies for easy reading.
 - `showall=False` : show all rotations.
 - `show=False` : show figure to screen.

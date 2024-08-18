@@ -1,37 +1,48 @@
 # Double Underscore Function Definitions
 
-convert_unitary = ["bool", "complex", "float", "format", "hex", "index", "int", "long", "oct", "str", "unicode"]
+convert_unitary = "bool complex float format hex index int long oct str unicode".split()
+
+convert = convert_unitary
 
 # Common: bool, float, format, int, long, str, complex (Unitary Operators)
 # Python 2: oct, hex (Unitary Operators)
 # Python 3: index (Unitary Operators)
 
-compare_unitary = ["eq", "ge", "gt", "le", "lt", "ne"]
-compare_binary = ["and", "or", "xor"]
-compare_reverse = ["rand", "ror", "rxor"]
-compare_inplace = ["iand", "ior", "ixor"]
+compare_unitary = "eq ge gt le lt ne".split()
+compare_binary = "and or xor".split()
+compare_reverse = "rand ror rxor".split()
+compare_inplace = "iand ior ixor".split()
 
-# "==", ">=", ">", "<=", "<", "!=" (Unitary Operators)
-# "and", "&", "or", "|", "xor", "^" (Bianary/Reverse Operators)
-# "&=", "|=", "^=" (Inplace Operators)
+compare = compare_unitary + compare_binary + compare_reverse + compare_inplace
 
-bitwise_unitary = ["invert"]
-bitwise_binary = ["lshift", "rshift"]
-bitwise_reverse = ["rlshift", "rrshift"]
-bitwise_inplace = ["ilshift", "irshift"]
+# "== >= > <= < !=" (Unitary Operators)
+# "and & or | xor ^" (Bianary/Reverse Operators)
+# "&= |= ^=" (Inplace Operators)
+
+bitwise_unitary = "invert".split()
+bitwise_binary = "lshift rshift".split()
+bitwise_reverse = "rlshift rrshift".split()
+bitwise_inplace = "ilshift irshift".split()
+
+bitwise = bitwise_unitary + bitwise_binary + bitwise_reverse + bitwise_inplace
 
 # "~" (Unitary Operators)
-# "<<", ">>" (Bianary/Reverse Operators)
-# ">>=", "<<=" (Inplace Operators)
+# "<< >>" (Bianary/Reverse Operators)
+# ">>= <<=" (Inplace Operators)
 
-get_unitary = ["get", "getattr", "getitem", "getslice"]
-set_unitary = ["set", "setattr", "setitem", "setslice"]
-del_unitary = ["del", "delattr", "delitem", "delslice"]
-obj_unitary = ["coerce", "dict", "dir", "fspath", "hash", "import", "reduce", "repr", "slots"]
-arr_unitary = ["contains", "missing", "nonzero", "len", "sizeof"]
+get_unitary = "get getattr getitem getslice".split()
+set_unitary = "set setattr setitem setslice".split()
+del_unitary = "del delattr delitem delslice".split()
+obj_unitary = "coerce dict dir fspath hash import reduce repr slots".split()
+arr_unitary = "contains missing nonzero len sizeof".split()
+
+objects = get_unitary + set_unitary + del_unitary + obj_unitary + arr_unitary
 
 # Python 2: nonzero, getslice, setslice, delslice
 
+# + add, - sub, * mul, // floordiv, / div, % mod, ** pow
+# += iadd, -= isub, *= imul, //= ifloordiv, /= idiv, %= imod, **= ipow
+# abs(x), ceil(x)
 # x.y (Attribute)
 # x[y] (Item)
 # x[start:stop:step] (Slice)
@@ -39,23 +50,16 @@ arr_unitary = ["contains", "missing", "nonzero", "len", "sizeof"]
 # print x.y (Get)
 # del x.y (Del)
 
-math_unitary = ["abs", "ceil", "floor", "neg", "pos", "round", "trunc"]
-math_binary = ["add", "divmod", "floordiv", "mod", "mul", "matmul", "pow", "sub", "truediv"]
-math_reverse = ["radd", "rdivmod", "rfloordiv", "rmod", "rmul", "rmatmul", "rpow", "rsub", "rtruediv"]
-math_inplace = ["iadd", "ifloordiv", "imod", "imul", "imatmul", "ipow", "isub", "itruediv"]
+math_unitary = "abs ceil floor neg pos round trunc".split()
+math_binary = "add divmod floordiv mod mul matmul pow sub truediv".split()
+math_reverse = "radd rdivmod rfloordiv rmod rmul rmatmul rpow rsub rtruediv".split()
+math_inplace = "iadd ifloordiv imod imul imatmul ipow isub itruediv".split()
 
-# + add, - sub, * mul, // floordiv, / div, % mod, ** pow
-# += iadd, -= isub, *= imul, //= ifloordiv, /= idiv, %= imod, **= ipow
-# abs(x), ceil(x)
+math = math_unitary + math_binary + math_reverse + math_inplace
 
 # Double Underscore Meta Definitions
 
-converts = convert_unitary
-compares = compare_unitary + compare_binary + compare_reverse + compare_inplace
-bitwises = bitwise_unitary + bitwise_binary + bitwise_reverse + bitwise_inplace
-objects = get_unitary + set_unitary + del_unitary + obj_unitary + arr_unitary
-maths = math_unitary + math_binary + math_reverse + math_inplace
-everything = converts + compares + bitwises + objects + maths
+everything = convert + compare + bitwise + objects + math
 
 def dunders(base=None, names=everything, force=False):
 

@@ -2,11 +2,12 @@ from hypercomplex import Order, Names
 
 import argparse as ap
 import definitions as df
-import graph_tool as gt
-import graph_tool.draw as gtd
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import itertools as it
 import networkx as nx
 import numpy as np
+import warnings
 
 def group(**options):
 
@@ -52,6 +53,27 @@ def group(**options):
 
 		return id
 
+	def add_node(graph, a, color, label):
+
+		graph.add_node(a, label=label, color=color)
+
+	def add_edge(graph, a, b, color):
+
+		rad_inc = 0.05
+		rad_min = 0.05
+
+		if (a, b) in graph.edges:
+
+			rad_max = max(x[2]["radius"] for x in graph.edges(data=True) if sorted(x[:2]) == sorted([a,b]))
+
+		else:
+
+			rad_max = rad_min
+
+		graph.add_edge(a, b, radius=rad_max+rad_inc, color=color)
+
+	warnings.filterwarnings("ignore")
+
 	element = option("element", "e", **options)
 	indices = option("indices", "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX", **options)
 	fontsize = option("fontsize", 14, **options)
@@ -59,7 +81,6 @@ def group(**options):
 	figdpi = option("figdpi", 100.0, **options)
 	filename = option("filename", "G{order}.{filetype}", **options)
 	filetype = option("filetype", "png", **options)
-	directed = option("directed", False, **options)
 	showneg = option("negatives", False, **options)
 	showpos = option("positives", False, **options)
 	showall = option("showall", False, **options)
@@ -88,6 +109,7 @@ def group(**options):
 	size = self.dimensions * 2
 	groups = np.zeros((size, size), dtype=int)
 	indices = list(indices)
+	figsize = (figsize, figsize)
 	connections = []
 	layered = []
 	indexes = []
@@ -100,7 +122,7 @@ def group(**options):
 
 		layers = layers.split(",")
 		layered = [0] * len(layers)
-		showall = True
+		showpos = True
 
 		for index in range(0, len(layers)):
 
@@ -110,6 +132,7 @@ def group(**options):
 			if layer[:1] == "-" or layer[:1] == "+": # first handle sign
 
 				id += self.dimensions if layer[:1] == "-" else 0
+				showneg = True if layer[:1] == "-" else showneg
 				layer = layer[1:]
 
 			if element in layer: # handle e0,e12,e4, etc.
@@ -157,68 +180,83 @@ def group(**options):
 
 			break
 
-	first = nx.from_numpy_array(connections[0])
-	loops = nx.connected_components(first)
-	loops = [np.roll(x, -k) for k, x in enumerate(loops)]
-	graph = gt.Graph(directed=directed)
-	text = graph.new_vertex_property("string")
-	pos = graph.new_vertex_property("vector<double>")
-	fill = graph.new_vertex_property("vector<double>")
-	color = graph.new_edge_property("vector<double>")
+	# Create Graph
 
-	graph.add_vertex(size)
+	graph = nx.MultiDiGraph()
+	fig, ax = plt.subplots(figsize=figsize, dpi=figdpi)
+	pos = df.locationmap(self.order, size)
+	fig.set_facecolor("black")
+	ax.margins(0.05)
+	ax.axis("off")
 
-	# Position Indices Consistantly
+	# Add Nodes
 
 	for id in range(size):
 
-		vertex = graph.vertex(id)
+		label = self.named(1, index=id, asstring=True, **options)
+		color = df.color(self.order, id)
 
-		text[vertex] = self.named(1, index=id, asstring=True, **options)
-		fill[vertex] = df.color(self.order, id)
-		pos[vertex] = df.location(self.order, id)
+		add_node(graph, id, color, label)
 
-	# Add Rotations
+	# Add Edges
 
 	for id, connection in enumerate(connections):
 
+		color = df.color(self.order, indexes[id])
+
 		for e1, e2 in zip(*np.where(connection)):
 
-			edge = graph.add_edge(e1, e2)
+			add_edge(graph, e1, e2, color)
 
-			color[edge] = df.color(self.order, indexes[id])
+	# Draw Nodes
 
-	opts = {
-		"edge_color": color,
-		"edge_pen_width": 2,
-		"edge_marker_size": 20,
-		"edge_start_marker": "none",
-			# “none”, “arrow”, “circle”, “square”, “diamond”, “bar”
-		"edge_end_marker": "arrow",
-			# “none”, “arrow”, “circle”, “square”, “diamond”, “bar”
-		"output_size": (int(figsize * figdpi), int(figsize * figdpi)),
-		"vertex_font_size": fontsize,
-		"vertex_fill_color": fill,
-		"vertex_text": text,
-		"vertex_shape": "circle",
-			# “circle”, “triangle”, “square”, “pentagon”, “hexagon”,
-			# “heptagon”, “octagon” “double_circle”, “double_triangle”, “double_square”,
-			# “double_pentagon”, “double_hexagon”, “double_heptagon”, “double_octagon”,
-			# “pie”, “none”
-		"vertex_pen_width": 1,
-		"vertex_size": 30,
-		"pos": pos,
-	}
+	for id, data in graph.nodes(data=True):
+
+		nx_node_opts = {
+			"nodelist": [id],
+			"node_color": data["color"],
+			"node_size": 750,
+			"node_shape": "o",
+			"edgecolors": "darkgray",
+			"margins": 0.1
+		}
+
+		nx_label_opts = {
+			"labels": {id: data["label"]},
+			"font_size": fontsize,
+			"font_color": "black"
+		}
+
+		nx.draw_networkx_nodes(graph, pos, **nx_node_opts)
+		nx.draw_networkx_labels(graph, pos, **nx_label_opts)
+
+	# Draw Edges
+
+	for e1, e2, data in graph.edges(data=True):
+
+		nx_edge_opts = {
+			"edgelist": [(e1,e2)],
+			"edge_color": data["color"],
+			"connectionstyle": "arc3, rad = " + str(data["radius"]),
+			"arrowstyle": "-|>",
+			"arrowsize": 35,
+			"arrows": True,
+			"width": 1.0
+		}
+
+		nx.draw_networkx_edges(graph, pos, **nx_edge_opts)
+
+	plt.tight_layout()
 
 	if save:
 
 		output = ((filename).format(order=self.order, filetype=filetype))
 
-		gtd.graph_draw(graph, output=output, fmt=filetype, **opts)
+		plt.savefig(output, dpi=figdpi)
 
 	if show:
 
-		gtd.graph_draw(graph, **opts)
+		plt.show()
 
 if __name__ == "__main__":
 
@@ -235,7 +273,6 @@ if __name__ == "__main__":
 	parser.add_argument("-l", "--layers", type=str)
 	parser.add_argument("-n", "--named", type=str)
 
-	parser.add_argument("--directed", action="store_true")
 	parser.add_argument("--translate", action="store_true")
 	parser.add_argument("--negatives", action="store_true")
 	parser.add_argument("--positives", action="store_true")
