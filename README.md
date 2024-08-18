@@ -39,7 +39,6 @@ The following packages are required, mostly for the graphical functionality, if 
 - networkx (Group)
 - matplotlib (Plot)
 - seaborn (Plot)
-- pylab (Plot)
 
 ### **`Import Librarys`**
 

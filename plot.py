@@ -2,8 +2,8 @@ from hypercomplex import Order, Names
 
 import argparse as ap
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import seaborn as sea
-import pylab as pyl
 import numpy as np
 
 # Color Maps: https://matplotlib.org/stable/tutorials/colors/colormaps.html
@@ -51,7 +51,7 @@ def plot(**options):
 
 	size = self.dimensions
 	matrix = self.matrix(asindex=True)
-	figure, axis = pyl.subplots(figsize=(figsize, figsize), dpi=figdpis)
+	figure, axis = plt.subplots(figsize=(figsize, figsize), dpi=figdpis)
 	numcolors = 2 * size + 1 if diverge else size
 	positives = sea.color_palette(poscmap, numcolors)
 	negatives = sea.color_palette(negcmap, numcolors)
@@ -71,17 +71,17 @@ def plot(**options):
 	axis.set_xlim(0, size)
 	axis.set_ylim(0, size)
 
-	pyl.tight_layout()
+	plt.tight_layout()
 
 	if save:
 
 		output = ((filename).format(order=self.order, filetype=filetype))
 
-		pyl.savefig(output)
+		plt.savefig(output)
 
 	if show:
 
-		pyl.show()
+		plt.show()
 
 if __name__ == "__main__":
 
