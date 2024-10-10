@@ -18,7 +18,7 @@ def plot(**options):
 
 		return default
 
-	showneg = option("negatives", False, **options)
+	showneg = option("negatives", True, **options)
 	poscmap = option("colormap", "RdBu_r", **options)
 	negcmap = option("ncolormap", "PiYG_r", **options)
 	diverge = option("diverging", True, **options)
