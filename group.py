@@ -3,11 +3,10 @@ from hypercomplex import Order, Names
 import argparse as ap
 import definitions as df
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import itertools as it
 import networkx as nx
 import numpy as np
-import warnings
+import warnings as wn
 
 def group(**options):
 
@@ -72,23 +71,23 @@ def group(**options):
 
 		graph.add_edge(a, b, radius=rad_max+rad_inc, color=color)
 
-	warnings.filterwarnings("ignore")
+	wn.filterwarnings("ignore")
 
 	element = option("element", "e", **options)
 	indices = option("indices", "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX", **options)
 	fontsize = option("fontsize", 14, **options)
-	figsize = option("figsize", 6.0, **options)
+	figsize = option("figsize", 8.0, **options)
 	figdpi = option("figdpi", 100.0, **options)
 	filename = option("filename", "G{order}.{filetype}", **options)
 	filetype = option("filetype", "png", **options)
 	showneg = option("negatives", False, **options)
-	showpos = option("positives", False, **options)
+	showpos = option("positives", True, **options)
 	showall = option("showall", False, **options)
 	layers = option("layers", False, **options)
 	order = option("order", None, **options)
 	named = option("named", None, **options)
 	save = option("save", False, **options)
-	show = option("show", False, **options)
+	show = option("show", True, **options)
 
 	if named != None:
 
@@ -254,7 +253,7 @@ def group(**options):
 
 		plt.savefig(output, dpi=figdpi)
 
-	if show:
+	elif show:
 
 		plt.show()
 
@@ -267,18 +266,18 @@ if __name__ == "__main__":
 	parser.add_argument("-i", "--indices", type=str, default="1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX")
 	parser.add_argument("-f", "--filename", type=str, default="G{order}.{filetype}")
 	parser.add_argument("-t", "--filetype", type=str, default="png")
-	parser.add_argument("-s", "--figsize", type=float, default=6.0)
+	parser.add_argument("-s", "--figsize", type=float, default=8.0)
 	parser.add_argument("-r", "--figdpi", type=float, default=100.0)
 	parser.add_argument("-x", "--fontsize", type=int, default=14)
 	parser.add_argument("-l", "--layers", type=str)
 	parser.add_argument("-n", "--named", type=str)
 
-	parser.add_argument("--translate", action="store_true")
-	parser.add_argument("--negatives", action="store_true")
-	parser.add_argument("--positives", action="store_true")
-	parser.add_argument("--showall", action="store_true")
-	parser.add_argument("--save", action="store_true")
-	parser.add_argument("--show", action="store_true")
+	parser.add_argument("--translate", action="store_true", default=True)
+	parser.add_argument("--negatives", action="store_true", default=False)
+	parser.add_argument("--positives", action="store_true", default=True)
+	parser.add_argument("--showall", action="store_true", default=False)
+	parser.add_argument("--save", action="store_true", default=False)
+	parser.add_argument("--show", action="store_true", default=True)
 
 	args, urgs = parser.parse_known_args()
 

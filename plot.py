@@ -21,15 +21,15 @@ def plot(**options):
 	showneg = option("negatives", False, **options)
 	poscmap = option("colormap", "RdBu_r", **options)
 	negcmap = option("ncolormap", "PiYG_r", **options)
-	diverge = option("diverging", False, **options)
-	figsize = option("figsize", 6.0, **options)
+	diverge = option("diverging", True, **options)
+	figsize = option("figsize", 8.0, **options)
 	figdpis = option("figdpi", 100.0, **options)
 	filename = option("filename", "P{order}.{filetype}", **options)
 	filetype = option("filetype", "png", **options)
 	order = option("order", None, **options)
 	named = option("named", None, **options)
 	save = option("save", False, **options)
-	show = option("show", False, **options)
+	show = option("show", True, **options)
 
 	if named != None:
 
@@ -79,7 +79,7 @@ def plot(**options):
 
 		plt.savefig(output)
 
-	if show:
+	elif show:
 
 		plt.show()
 
@@ -90,16 +90,16 @@ if __name__ == "__main__":
 	parser.add_argument("-o", "--order", type=int, default=2)
 	parser.add_argument("-f", "--filename", type=str, default="P{order}.{filetype}")
 	parser.add_argument("-t", "--filetype", type=str, default="png")
-	parser.add_argument("-s", "--figsize", type=float, default=6.0)
+	parser.add_argument("-s", "--figsize", type=float, default=8.0)
 	parser.add_argument("-r", "--figdpi", type=int, default=100)
 	parser.add_argument("-c", "--colormap", type=str, default="RdBu_r")
 	parser.add_argument("-x", "--ncolormap", type=str, default="PiYG_r")
 	parser.add_argument("-n", "--named", type=str)
 
-	parser.add_argument("--negatives", action="store_true")
-	parser.add_argument("--diverging", action="store_true")
-	parser.add_argument("--save", action="store_true")
-	parser.add_argument("--show", action="store_true")
+	parser.add_argument("--negatives", action="store_true", default=True)
+	parser.add_argument("--diverging", action="store_true", default=True)
+	parser.add_argument("--save", action="store_true", default=False)
+	parser.add_argument("--show", action="store_true", default=True)
 
 	args, urgs = parser.parse_known_args()
 

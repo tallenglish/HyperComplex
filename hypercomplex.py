@@ -179,7 +179,7 @@ def cayley_dickson_construction(parent):
 
 			element = option("element", "e", **args)
 			indices = option("indices", "1ijkLIJKmpqrMPQRnstuNSTUovwxOVWX", **args)
-			translate = option("translate", False, **args)
+			translate = option("translate", True, **args)
 			asindex = option("asindex", False, **args)
 			asstring = option("asstring", False, **args)
 			astuple = option("astuple", False, **args)
